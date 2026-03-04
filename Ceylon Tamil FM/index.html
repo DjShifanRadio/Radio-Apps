@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>சிலோன் தமிழ் FM</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+:root{
+    --primary:#ff6a00;
+    --secondary:#00c6ff;
+    --player-bg:rgba(20,40,50,0.7);
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+
+body{
+    height:100vh;
+    overflow:hidden;
+    background:linear-gradient(135deg,#0f2027,#203a43,#2c5364);
+    color:white;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+
+/* Background Particles */
+#bgCanvas{
+    position:fixed;
+    top:0;left:0;
+    width:100%;height:100%;
+    z-index:0;
+}
+
+/* ================= DASHBOARD ================= */
+
+.dashboard{
+    width:95%;
+    max-width:1200px;
+    z-index:10;
+    padding-bottom:90px;
+}
+
+.content-wrapper{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:40px;
+}
+
+/* LEFT SECTION */
+.left-section{
+    flex:1;
+    text-align:center;
+}
+
+.logo{
+    width:150px;
+    border-radius:25%;
+    border:3px solid var(--primary);
+    animation:logoFloat 4s ease-in-out infinite;
+    box-shadow:0 0 40px rgba(255,106,0,0.4);
+}
+
+@keyframes logoFloat{
+    0%,100%{transform:translateY(0);}
+    50%{transform:translateY(-15px);}
+}
+
+h1{
+    margin-top:15px;
+    font-size:2rem;
+}
+
+.tagline{
+    margin:10px 0 25px;
+    opacity:0.8;
+}
+
+/* Download Button */
+.download-btn{
+    display:inline-block;
+    padding:15px 35px;
+    border-radius:50px;
+    font-weight:700;
+    text-decoration:none;
+    color:white;
+    background:linear-gradient(45deg,var(--secondary),var(--primary));
+    position:relative;
+    overflow:hidden;
+    transition:.4s;
+    box-shadow:0 10px 30px rgba(255,106,0,0.4);
+}
+
+.download-btn:hover{
+    transform:scale(1.08);
+    box-shadow:0 15px 40px rgba(255,106,0,0.8);
+}
+
+.download-btn::before{
+    content:"";
+    position:absolute;
+    top:0;left:-100%;
+    width:100%;height:100%;
+    background:linear-gradient(120deg,transparent,rgba(255,255,255,0.6),transparent);
+    transition:.6s;
+}
+
+.download-btn:hover::before{
+    left:100%;
+}
+
+/* RIGHT SECTION */
+.right-section{
+    flex:1;
+    display:flex;
+    justify-content:center;
+}
+
+.slider-container{
+    width:280px;
+    aspect-ratio:9/16;
+    overflow:hidden;
+    border-radius:25px;
+    border:3px solid rgba(255,255,255,0.2);
+    box-shadow:0 25px 60px rgba(0,0,0,0.6);
+    background:black;
+}
+
+.slides{
+    display:flex;
+    transition:transform .6s ease;
+    height:100%;
+}
+
+.slides img{
+    width:100%;
+    object-fit:cover;
+}
+
+/* MOBILE */
+@media(max-width:900px){
+    .content-wrapper{
+        flex-direction:column;
+    }
+    .slider-container{
+        width:200px;
+        margin-top:20px;
+    }
+    .logo{width:110px;}
+}
+
+/* ================= PLAYER ================= */
+
+.player-bar{
+    position:fixed;
+    bottom:0;
+    width:100%;
+    height:75px;
+    background:var(--player-bg);
+    backdrop-filter:blur(15px);
+    display:grid;
+    grid-template-columns:1fr auto 1fr;
+    align-items:center;
+    padding:0 20px;
+    z-index:100;
+}
+
+#playerCanvas{
+    position:absolute;
+    top:0;left:0;
+    width:100%;height:100%;
+    z-index:-1;
+    opacity:0.5;
+}
+
+.player-left{display:flex;align-items:center;gap:10px;}
+.play-btn{
+    width:42px;height:42px;
+    border-radius:50%;
+    border:none;
+    background:var(--primary);
+    color:white;
+    font-size:18px;
+    cursor:pointer;
+}
+
+.player-center{text-align:center;}
+.powered-text{font-size:8px;opacity:.6;}
+.player-dev-logo{height:28px;filter:brightness(2);}
+
+.player-right{display:flex;justify-content:flex-end;}
+#visualizer{width:120px;height:30px;}
+
+</style>
+</head>
+<body>
+
+<canvas id="bgCanvas"></canvas>
+
+<main class="dashboard">
+<div class="content-wrapper">
+
+<div class="left-section">
+<img src="Logo.png" class="logo">
+<h1>சிலோன் தமிழ் FM</h1>
+<p class="tagline"தாயகத்தமிழரின் தேசிய வானொலி</p>
+<a href="https://apk.e-droid.net/apk/app3522112-auyx09.apk?v=3" class="download-btn">
+⬇ Download Android App
+</a>
+</div>
+
+<div class="right-section">
+<div class="slider-container">
+<div class="slides" id="slide-container">
+<img src="https://radio.ceylontamil.com/asset/img/23.png">
+<img src="02.png">
+<img src="03.png">
+<img src="04.png">
+<img src="05.png">
+<img src="06.png">
+</div>
+</div>
+</div>
+
+</div>
+</main>
+
+<!-- PLAYER -->
+<div class="player-bar">
+<canvas id="playerCanvas"></canvas>
+
+<div class="player-left">
+<button class="play-btn" onclick="toggleRadio()">▶</button>
+<div>
+<b style="color:var(--primary);font-size:11px;">LIVE</b><br>
+<span style="font-size:9px;opacity:.8;">TAMIL RADIO</span>
+</div>
+</div>
+
+<div class="player-center">
+<span class="powered-text">Powered By:</span><br>
+<img src="DevLogo.png" class="player-dev-logo">
+</div>
+
+<div class="player-right">
+<canvas id="visualizer"></canvas>
+</div>
+</div>
+
+<audio id="audioSource" crossorigin="anonymous"
+src="https://stream-156.zeno.fm/1gwks8nf7tzuv"></audio>
+
+<script>
+
+/* PARTICLES */
+function createParticles(canvasId,count,speed,color){
+const canvas=document.getElementById(canvasId);
+const ctx=canvas.getContext('2d');
+let particles=[];
+function resize(){
+canvas.width=canvas.offsetWidth;
+canvas.height=canvas.offsetHeight;
+}
+window.addEventListener('resize',resize);
+resize();
+
+class P{
+constructor(){
+this.x=Math.random()*canvas.width;
+this.y=Math.random()*canvas.height;
+this.size=Math.random()*2+0.5;
+this.spX=(Math.random()-0.5)*speed;
+this.spY=(Math.random()-0.5)*speed;
+}
+update(){
+this.x+=this.spX;
+this.y+=this.spY;
+if(this.x>canvas.width)this.x=0;
+if(this.x<0)this.x=canvas.width;
+if(this.y>canvas.height)this.y=0;
+if(this.y<0)this.y=canvas.height;
+}
+draw(){
+ctx.fillStyle=color;
+ctx.beginPath();
+ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+ctx.fill();
+}
+}
+
+for(let i=0;i<count;i++)particles.push(new P());
+
+function animate(){
+ctx.clearRect(0,0,canvas.width,canvas.height);
+particles.forEach(p=>{p.update();p.draw();});
+requestAnimationFrame(animate);
+}
+animate();
+}
+
+createParticles('bgCanvas',60,0.5,'rgba(255,255,255,0.3)');
+createParticles('playerCanvas',30,1.2,'rgba(0,198,255,0.4)');
+
+/* SLIDER */
+let currentIdx=0;
+const slides=document.getElementById('slide-container');
+const totalSlides=slides.children.length;
+
+setInterval(()=>{
+currentIdx=(currentIdx+1)%totalSlides;
+slides.style.transform=`translateX(-${currentIdx*100}%)`;
+},4000);
+
+/* AUDIO + VISUALIZER */
+const audio=document.getElementById('audioSource');
+const btn=document.querySelector('.play-btn');
+const vCanvas=document.getElementById('visualizer');
+const vCtx=vCanvas.getContext('2d');
+let audioCtx,analyser,source,dataArray,isInit=false;
+
+function initV(){
+audioCtx=new(window.AudioContext||window.webkitAudioContext)();
+analyser=audioCtx.createAnalyser();
+source=audioCtx.createMediaElementSource(audio);
+source.connect(analyser);
+analyser.connect(audioCtx.destination);
+analyser.fftSize=64;
+analyser.smoothingTimeConstant=0.8;
+dataArray=new Uint8Array(analyser.frequencyBinCount);
+vCanvas.width=vCanvas.offsetWidth;
+vCanvas.height=vCanvas.offsetHeight;
+isInit=true;
+drawV();
+}
+
+function toggleRadio(){
+if(!isInit)initV();
+if(audio.paused){
+audio.play().catch(e=>console.log(e));
+btn.innerHTML="⏸";
+if(audioCtx.state==='suspended')audioCtx.resume();
+}else{
+audio.pause();
+btn.innerHTML="▶";
+}
+}
+
+function drawV(){
+requestAnimationFrame(drawV);
+if(!isInit)return;
+analyser.getByteFrequencyData(dataArray);
+vCtx.clearRect(0,0,vCanvas.width,vCanvas.height);
+const barWidth=(vCanvas.width/dataArray.length)*2;
+let x=0;
+for(let i=0;i<dataArray.length;i++){
+const h=(dataArray[i]/255)*vCanvas.height;
+vCtx.fillStyle='#ff6a00';
+vCtx.fillRect(x,vCanvas.height-h,barWidth-1,h);
+x+=barWidth;
+}
+}
+
+</script>
+</body>
+</html>

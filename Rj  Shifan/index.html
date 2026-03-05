@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>RJ SHIFAN RADIO</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;500;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root{
+--primary:#00eaff;
+--secondary:#ff00c8;
+--bg:#0a0f1e;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:'Poppins',sans-serif;
+}
+
+body{
+background:var(--bg);
+color:white;
+min-height:100vh;
+overflow-x:hidden;
+padding-bottom:120px;
+}
+
+/* STAR BACKGROUND */
+
+#space{
+position:fixed;
+top:0;
+left:0;
+width:100%;
+height:100%;
+z-index:-1;
+}
+
+/* MAIN CARD */
+
+.container{
+max-width:1100px;
+margin:auto;
+padding:40px 20px;
+}
+
+.card{
+
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(15px);
+
+border-radius:25px;
+padding:40px;
+
+border:1px solid rgba(255,255,255,.15);
+
+box-shadow:0 20px 60px rgba(0,0,0,.6);
+
+}
+
+/* FLEX */
+
+.flex{
+
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:40px;
+
+}
+
+/* LEFT */
+
+.left{
+flex:1;
+text-align:center;
+}
+
+.logo{
+
+width:160px;
+
+border-radius:25%;
+
+border:3px solid var(--secondary);
+
+box-shadow:
+0 0 20px var(--secondary),
+0 0 40px var(--primary);
+
+animation:float 4s infinite ease-in-out;
+
+}
+
+@keyframes float{
+
+0%,100%{transform:translateY(0)}
+50%{transform:translateY(-15px)}
+
+}
+
+h1{
+margin-top:15px;
+font-size:2rem;
+}
+
+.tag{
+opacity:.8;
+margin:10px 0 25px;
+}
+
+/* BUTTON */
+
+.btn{
+
+display:inline-block;
+
+padding:14px 35px;
+
+border-radius:40px;
+
+background:linear-gradient(45deg,var(--primary),var(--secondary));
+
+color:white;
+text-decoration:none;
+font-weight:600;
+
+transition:.3s;
+
+}
+
+.btn:hover{
+
+transform:scale(1.08);
+box-shadow:0 0 25px var(--secondary);
+
+}
+
+/* PHONE SLIDER */
+
+.phone{
+
+width:260px;
+aspect-ratio:9/16;
+
+border-radius:25px;
+overflow:hidden;
+
+border:3px solid rgba(255,255,255,.2);
+
+}
+
+.slides{
+display:flex;
+transition:.6s;
+}
+
+.slides img{
+width:100%;
+object-fit:cover;
+}
+
+/* PLAYER BAR */
+
+.player{
+
+position:fixed;
+bottom:0;
+left:0;
+width:100%;
+height:95px;
+
+background:rgba(0,0,0,.6);
+
+backdrop-filter:blur(20px);
+
+border-top:1px solid rgba(255,255,255,.2);
+
+display:grid;
+grid-template-columns:1fr auto 1fr;
+
+align-items:center;
+
+padding:0 20px;
+
+}
+
+/* PLAY BUTTON */
+
+.play{
+
+width:55px;
+height:55px;
+
+border-radius:50%;
+
+border:none;
+
+background:linear-gradient(45deg,var(--secondary),var(--primary));
+
+color:white;
+font-size:22px;
+
+cursor:pointer;
+
+box-shadow:0 0 25px var(--secondary);
+
+}
+
+/* LIVE TEXT */
+
+.live{
+
+color:red;
+font-size:12px;
+
+animation:pulse 1.2s infinite;
+
+}
+
+@keyframes pulse{
+0%{opacity:1}
+50%{opacity:.3}
+100%{opacity:1}
+}
+
+/* CIRCLE VISUALIZER */
+
+#visualizer{
+
+width:70px;
+height:70px;
+
+}
+
+/* MOBILE */
+
+@media(max-width:900px){
+
+.flex{
+flex-direction:column;
+}
+
+.phone{
+width:200px;
+}
+
+.logo{
+width:120px;
+}
+
+.card{
+padding:25px;
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<canvas id="space"></canvas>
+
+<div class="container">
+
+<div class="card">
+
+<div class="flex">
+
+<div class="left">
+
+<img src="Logo.gif" class="logo">
+
+<h1>RJ SHIFAN RADIO</h1>
+
+<p class="tag">"தமிழ் எங்கள் மொழி அல்ல. உயிர்"</p>
+
+<a href="https://apk.e-droid.net/apk/app2388398-l5qou7.apk?v=12" class="btn">
+⬇ Download Android App
+</a>
+
+</div>
+
+<div class="phone">
+
+<div class="slides" id="slides">
+
+<img src="01.png">
+<img src="02.png">
+<img src="03.png">
+<img src="04.png">
+<img src="05.png">
+<img src="06.png">
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+</div>
+
+<!-- PLAYER -->
+
+<div class="player">
+
+<div style="display:flex;align-items:center;gap:10px">
+
+<button class="play" onclick="toggle()">▶</button>
+
+<div>
+
+<b class="live">LIVE</b>
+
+<div style="font-size:11px;opacity:.8">RJ SHIFAN RADIO</div>
+
+</div>
+
+</div>
+
+<div>
+
+<img src="DevLogo.png" height="28">
+
+</div>
+
+<div>
+
+<canvas id="visualizer"></canvas>
+
+</div>
+
+</div>
+
+<audio id="radio" crossorigin="anonymous"
+src="https://stream-159.zeno.fm/dsdb1twe8ueuv"></audio>
+
+<script>
+
+/* IMAGE SLIDER */
+
+let i=0
+const slides=document.getElementById("slides")
+
+setInterval(()=>{
+i=(i+1)%6
+slides.style.transform=`translateX(-${i*100}%)`
+},4000)
+
+/* RADIO PLAYER */
+
+const radio=document.getElementById("radio")
+const btn=document.querySelector(".play")
+
+function toggle(){
+
+if(radio.paused){
+
+radio.play()
+btn.innerHTML="⏸"
+
+}else{
+
+radio.pause()
+btn.innerHTML="▶"
+
+}
+
+}
+
+/* VISUALIZER */
+
+const canvas=document.getElementById("visualizer")
+const ctx=canvas.getContext("2d")
+
+canvas.width=70
+canvas.height=70
+
+let audioCtx, analyser, source, data
+
+radio.addEventListener("play",()=>{
+
+audioCtx=new(window.AudioContext||window.webkitAudioContext)()
+
+analyser=audioCtx.createAnalyser()
+
+source=audioCtx.createMediaElementSource(radio)
+
+source.connect(analyser)
+analyser.connect(audioCtx.destination)
+
+analyser.fftSize=64
+
+data=new Uint8Array(analyser.frequencyBinCount)
+
+draw()
+
+},{once:true})
+
+function draw(){
+
+requestAnimationFrame(draw)
+
+if(!analyser)return
+
+analyser.getByteFrequencyData(data)
+
+ctx.clearRect(0,0,canvas.width,canvas.height)
+
+let radius=25
+
+for(let j=0;j<data.length;j++){
+
+let angle=(j/data.length)*Math.PI*2
+
+let height=data[j]/10
+
+let x=Math.cos(angle)*radius+35
+let y=Math.sin(angle)*radius+35
+
+ctx.beginPath()
+ctx.moveTo(35,35)
+ctx.lineTo(x,y)
+
+ctx.strokeStyle="#ff00c8"
+ctx.stroke()
+
+}
+
+}
+
+/* STARS */
+
+const space=document.getElementById("space")
+const sctx=space.getContext("2d")
+
+space.width=window.innerWidth
+space.height=window.innerHeight
+
+let stars=[]
+
+for(let s=0;s<200;s++){
+
+stars.push({
+
+x:Math.random()*space.width,
+y:Math.random()*space.height,
+size:Math.random()*2
+
+})
+
+}
+
+function animateStars(){
+
+sctx.clearRect(0,0,space.width,space.height)
+
+stars.forEach(star=>{
+
+sctx.fillStyle="white"
+sctx.fillRect(star.x,star.y,star.size,star.size)
+
+})
+
+requestAnimationFrame(animateStars)
+
+}
+
+animateStars()
+
+</script>
+
+</body>
+</html>

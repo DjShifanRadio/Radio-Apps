@@ -342,10 +342,9 @@
     <script>
         const ADMIN_WA_NUMBER = "94783744142";
         
-        // சரியாக்கப்பட்ட புதிய SHEET_URL
-const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1_k5FKI0JBDa6WmGhvyK242-eOMuNSPZ-fxcEyZ5mc94/gviz/tq?tqx=out:json';
+        // உங்கள் Google Sheet பப்ளிக் JSON API URL
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9hz2YYSzTZT9nKvrJZ3cFYPx-CT-h9YVSmLgaQ3dGLUywPv04p5tHXVRoY1UrIzUAMekcdFW_htrZ/gviz/tq?tqx=out:json';
 
-        // ஆடியோ எலிமெண்ட்கள்
         const bgMusic = document.getElementById('bgMusic');
         const correctSound = document.getElementById('correctSound');
         const wrongSound = document.getElementById('wrongSound');
@@ -375,36 +374,50 @@ const SHEET_URL = 'https://docs.google.com/spreadsheets/d/1_k5FKI0JBDa6WmGhvyK24
             try {
                 const response = await fetch(SHEET_URL);
                 const text = await response.text();
-                const json = JSON.parse(text.substring(47, text.length - 2));
-                const rows = json.table.rows;
+                
+                // Safe RegEx JSON Parser
+                const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
+                if (!match) throw new Error("Invalid response format");
+                
+                const data = JSON.parse(match[1]);
+                const rows = data.table.rows;
 
                 let fetchedData = [];
-                rows.forEach((row, index) => {
-                    if (index === 0) return;
-                    if(row.c && row.c[0] && row.c[0].v) {
+                
+                rows.forEach((row) => {
+                    if (row.c && row.c[0] && row.c[0].v !== null) {
+                        const qVal = row.c[0].v.toString().trim();
+                        
+                        // Header வரியை புறக்கணித்தல்
+                        if (qVal.toLowerCase() === "question" || qVal === "கேள்வி") return;
+
+                        // Correct answer (1, 2, 3, 4) என்பதை JavaScript Array Index (0, 1, 2, 3) ஆக மாற்றுதல்
+                        let rawCorrect = row.c[5] ? parseInt(row.c[5].v) : 1;
+                        let correctIndex = (rawCorrect >= 1 && rawCorrect <= 4) ? rawCorrect - 1 : 0;
+
                         fetchedData.push({
-                            question: row.c[0] ? row.c[0].v : "",
+                            question: qVal,
                             options: [
-                                row.c[1] ? row.c[1].v : "",
-                                row.c[2] ? row.c[2].v : "",
-                                row.c[3] ? row.c[3].v : "",
-                                row.c[4] ? row.c[4].v : ""
+                                row.c[1] && row.c[1].v !== null ? row.c[1].v.toString() : "",
+                                row.c[2] && row.c[2].v !== null ? row.c[2].v.toString() : "",
+                                row.c[3] && row.c[3].v !== null ? row.c[3].v.toString() : "",
+                                row.c[4] && row.c[4].v !== null ? row.c[4].v.toString() : ""
                             ],
-                            correct: row.c[5] ? parseInt(row.c[5].v) : 0
+                            correct: correctIndex
                         });
                     }
                 });
 
-                quizData = fetchedData.reverse();
-
-                if(quizData.length > 0) {
+                if(fetchedData.length > 0) {
+                    // புதிய கேள்விகள் முதலில் வர விரும்புமானால் reverse() பயன்படுத்தவும்
+                    quizData = fetchedData.reverse();
                     loadQuestion();
                 } else {
-                    document.getElementById('qText').innerText = "கேள்விகள் எதுவும் கிடைக்கவில்லை!";
+                    document.getElementById('qText').innerText = "கேள்விகள் எதுவும் பெறப்படவில்லை!";
                 }
 
             } catch (error) {
-                console.error("Sheet Error:", error);
+                console.error("Sheet Fetch Error:", error);
                 document.getElementById('qText').innerText = "கூகுள் சீட் தரவுகளை லோடு செய்வதில் பிழை ஏற்பட்டது.";
             }
         }

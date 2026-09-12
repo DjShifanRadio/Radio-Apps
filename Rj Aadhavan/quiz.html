@@ -341,7 +341,7 @@
     <script>
         const ADMIN_WA_NUMBER = "94783744142";
         
-        // OpenSheet API URL (உங்கள் Sheet ID-யுடன்)
+        // OpenSheet API URL
         const OPEN_SHEET_URL = 'https://opensheet.elk.sh/1_k5FKI0jBDa6WmGhvyK242-eOMuNSPZ-fxcEyZ5mc94/Sheet1';
 
         const bgMusic = document.getElementById('bgMusic');
@@ -369,7 +369,6 @@
         let currentQIndex = 0;
         let score = 0;
 
-        // OpenSheet மூலம் தரவுகளைப் பெறும் புதிய Function
         async function fetchQuestionsFromSheet() {
             try {
                 const response = await fetch(OPEN_SHEET_URL);
@@ -378,20 +377,20 @@
                 let fetchedData = [];
 
                 data.forEach((row) => {
-                    // தமிழிலோ ஆங்கிலத்திலோ தலைப்பு இருந்தாலும் தாங்கும் வகையில் அமைந்தது
-                    const qVal = row.Question || row["Question"] || row["கேள்வி"] || row.question;
+                    // Small & Capital தலைப்புகள் இரண்டையும் படிக்கும் வகையில் திருத்தப்பட்டுள்ளது
+                    const qVal = row.question || row.Question || row["கேள்வி"];
 
-                    if (qVal && qVal.trim() !== "") {
-                        let rawCorrect = parseInt(row.Correct || row["Correct"] || row["சரியான விடை"] || 1);
+                    if (qVal && qVal.toString().trim() !== "") {
+                        let rawCorrect = parseInt(row.correct || row.Correct || row["சரியான விடை"] || 1);
                         let correctIndex = (rawCorrect >= 1 && rawCorrect <= 4) ? rawCorrect - 1 : 0;
 
                         fetchedData.push({
-                            question: qVal,
+                            question: qVal.toString(),
                             options: [
-                                row.Option1 || row["Option1"] || row["ஆப்ஷன் 1"] || "",
-                                row.Option2 || row["Option2"] || row["ஆப்ஷன் 2"] || "",
-                                row.Option3 || row["Option3"] || row["ஆப்ஷன் 3"] || "",
-                                row.Option4 || row["Option4"] || row["ஆப்ஷன் 4"] || ""
+                                row.option1 || row.Option1 || row["ஆப்ஷன் 1"] || "",
+                                row.option2 || row.Option2 || row["ஆப்ஷன் 2"] || "",
+                                row.option3 || row.Option3 || row["ஆப்ஷன் 3"] || "",
+                                row.option4 || row.Option4 || row["ஆப்ஷன் 4"] || ""
                             ],
                             correct: correctIndex
                         });

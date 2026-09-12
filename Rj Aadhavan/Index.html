@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rj Aadhavan Radio | GTR வானொலி</title>
+    
+    <!-- Beautiful & Modern Tamil Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@300;400;500;600;700;800&family=Mukta+Malar:wght@400;500;600;700&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-glow: #00ff88;
+            --secondary-glow: #00e5ff;
+            --dark-bg: #050609;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(15px);
+            --text-light: #ffffff;
+            --text-dim: #b0b3c1;
+            
+            /* Enhanced Font Family Variables */
+            --font-tamil-primary: 'Anek Tamil', 'Mukta Malar', 'Poppins', sans-serif;
+            --font-tamil-heading: 'Mukta Malar', 'Anek Tamil', sans-serif;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: var(--font-tamil-primary); 
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 20%, #1a2035 0%, var(--dark-bg) 60%);
+            font-family: var(--font-tamil-primary);
+        }
+
+        h1, h2, h3, h4, h5, h6, .section-title, .logo-text {
+            font-family: var(--font-tamil-heading);
+        }
+
+        /* Smooth Music Cursor Canvas */
+        #cursorCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999; }
+
+        /* Header */
+        header {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 5%;
+            background: rgba(10, 11, 16, 0.75); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid var(--glass-border);
+        }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-img { height: 55px; width: auto; object-fit: contain; }
+        .logo-text { font-size: 22px; font-weight: 700; color: var(--text-light); }
+        .logo-text span { color: var(--secondary-glow); font-size: 16px; font-weight: 400; }
+
+        nav ul { display: flex; list-style: none; gap: 25px; }
+        nav a { color: var(--text-dim); text-decoration: none; font-weight: 500; transition: 0.3s; font-size: 15px; }
+        nav a:hover, nav a.active { color: var(--primary-glow); text-shadow: 0 0 10px var(--primary-glow); }
+        .mobile-menu-btn { display: none; font-size: 24px; color: #fff; cursor: pointer; }
+
+        /* Hero Slider */
+        .hero { height: 60vh; margin-top: 75px; position: relative; overflow: hidden; border-bottom: 1px solid var(--glass-border); }
+        .slide { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background-size: cover; background-position: center; opacity: 0; transition: opacity 1.2s ease-in-out; display: flex; align-items: center; justify-content: center; }
+        .slide.active { opacity: 1; }
+        .slide-content { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 40px; border-radius: 20px; border: 1px solid var(--glass-border); max-width: 650px; margin: 0 20px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .slide-content h2 { font-size: 2.3rem; margin-bottom: 12px; color: var(--text-light); font-weight: 800; }
+        .slide-content p { color: var(--text-dim); font-size: 1.05rem; }
+
+        /* Linear Visualizer Line & Play Button Wrapper */
+        .visualizer-divider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 100px;
+            margin-top: -50px;
+            z-index: 100;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        #visualizerCanvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100px;
+            pointer-events: none;
+        }
+
+        .play-btn { 
+            width: 90px; 
+            height: 90px; 
+            background: linear-gradient(135deg, #ff007f 0%, #00e5ff 100%); 
+            border-radius: 50%; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            font-size: 34px; 
+            color: #fff; 
+            cursor: pointer; 
+            border: none; 
+            outline: none; 
+            transition: all 0.4s ease; 
+            box-shadow: 0 0 25px rgba(255, 0, 127, 0.6), 0 0 50px rgba(0, 229, 255, 0.4); 
+            z-index: 10;
+            position: relative;
+        }
+        .play-btn::before { content: ''; position: absolute; top: -8px; left: -8px; bottom: -8px; right: -8px; border-radius: 50%; border: 2px solid #00e5ff; opacity: 0.5; animation: pulseRing 2s infinite; }
+        .play-btn:hover { transform: scale(1.1); box-shadow: 0 0 35px rgba(255, 0, 127, 0.8), 0 0 70px rgba(0, 229, 255, 0.7); }
+        @keyframes pulseRing { 0% { transform: scale(0.9); opacity: 0.5; } 80%, 100% { transform: scale(1.35); opacity: 0; } }
+
+        /* Sections */
+        section { padding: 50px 5%; }
+        .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 40px; color: var(--text-light); font-weight: 800; position: relative; display: inline-block; left: 50%; transform: translateX(-50%); }
+        .section-title::after { content: ''; position: absolute; bottom: -10px; left: 20px; right: 20px; height: 3px; background: linear-gradient(to right, #ff007f, var(--primary-glow), var(--secondary-glow)); border-radius: 2px; }
+
+        /* Strict 3-Column Grid Layout (3-3 Partition) */
+        .grid-container-3col { 
+            display: grid; 
+            grid-template-columns: repeat(3, 1fr); 
+            gap: 30px; 
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .card, .podcast-card { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); padding: 20px; border-radius: 20px; border: 1px solid var(--glass-border); transition: all 0.3s ease; box-shadow: 0 10px 20px rgba(0,0,0,0.2); text-align: center; }
+        .card:hover, .podcast-card:hover { transform: translateY(-8px); border-color: rgba(0, 255, 136, 0.3); box-shadow: 0 15px 30px rgba(0, 255, 136, 0.1); }
+        .gallery-img { width: 100%; height: 190px; object-fit: cover; border-radius: 15px; margin-bottom: 15px; }
+        .card h3, .podcast-card h3 { font-size: 1.25rem; margin-bottom: 8px; color: var(--text-light); }
+        .podcast-card p { color: var(--text-dim); font-size: 0.92rem; margin-bottom: 15px; }
+
+        .schedule-time {
+            color: var(--secondary-glow);
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 8px;
+        }
+
+        .schedule-days {
+            color: var(--primary-glow);
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 8px;
+        }
+
+        /* Podcast Listen Button */
+        .podcast-btn {
+            display: inline-flex; align-items: center; justify-content: center; gap: 10px; width: 100%; padding: 12px 20px;
+            background: linear-gradient(135deg, var(--primary-glow) 0%, var(--secondary-glow) 100%);
+            color: #000; font-weight: 700; font-size: 0.95rem; text-decoration: none; border-radius: 12px; transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0, 255, 136, 0.3);
+        }
+        .podcast-btn:hover { transform: translateY(-3px); box-shadow: 0 6px 20px rgba(0, 255, 136, 0.6); }
+
+        /* App Download Section */
+        .app-download { background: var(--glass-bg); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur); border-radius: 30px; padding: 50px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 40px; border: 1px solid var(--glass-border); box-shadow: 0 15px 40px rgba(0,0,0,0.3); max-width: 1200px; margin: 0 auto; }
+        .app-text { max-width: 550px; }
+        .app-text h2 { color: var(--text-light); margin-bottom: 20px; font-size: 2.2rem; font-weight: 800;}
+        .playstore-btn { display: inline-flex; align-items: center; gap: 15px; background: #000; color: #fff; padding: 15px 30px; border-radius: 15px; text-decoration: none; border: 1px solid #333; transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+        .playstore-btn:hover { background: #111; border-color: var(--secondary-glow); box-shadow: 0 5px 20px rgba(0, 229, 255, 0.2); }
+        .playstore-btn i { font-size: 35px; color: #689F38; }
+
+        /* Floating WhatsApp */
+        .whatsapp-float { position: fixed; bottom: 25px; right: 30px; background: linear-gradient(135deg, #25d366 0%, #1da851 100%); color: #FFF; border-radius: 50px; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; }
+        .whatsapp-float:hover { transform: scale(1.1) rotate(10deg); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); }
+
+        /* Floating Quiz Jackpot Button (Above WhatsApp) */
+        .quiz-float {
+            position: fixed;
+            bottom: 98px; /* Placed above WhatsApp floating button */
+            right: 30px;
+            z-index: 1000;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            overflow: hidden;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.5), 0 0 15px rgba(0, 229, 255, 0.6);
+            transition: transform 0.3s ease;
+            animation: bounce 2s infinite;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid var(--secondary-glow);
+            background: #000;
+        }
+
+        .quiz-float img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .quiz-float:hover {
+            transform: scale(1.15) rotate(5deg);
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.8);
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {
+                transform: translateY(0);
+            }
+            40% {
+                transform: translateY(-16px);
+            }
+            60% {
+                transform: translateY(-8px);
+            }
+        }
+
+        /* Footer */
+        footer { background: rgba(6, 7, 10, 0.8); backdrop-filter: blur(10px); padding: 50px 5% 30px 5%; border-top: 1px solid var(--glass-border); }
+        .clock-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 30px; }
+        .clock-box { text-align: center; background: var(--glass-bg); padding: 15px 25px; border-radius: 15px; border: 1px solid var(--glass-border); min-width: 250px; }
+        .clock-box h4 { color: var(--text-dim); margin-bottom: 5px; font-weight: 500; font-size: 0.9rem;}
+        .clock-box div { font-size: 1.3rem; font-weight: 700; color: var(--primary-glow); text-shadow: 0 0 10px var(--primary-glow); font-family: 'Poppins', sans-serif; }
+        .footer-bottom { text-align: center; color: var(--text-dim); font-size: 0.9rem; border-top: 1px solid var(--glass-border); padding-top: 25px; }
+
+        /* Mobile & Tablet Responsiveness */
+        @media (max-width: 992px) {
+            .grid-container-3col { grid-template-columns: repeat(2, 1fr); }
+        }
+        @media (max-width: 650px) {
+            .grid-container-3col { grid-template-columns: 1fr; }
+            .mobile-menu-btn { display: block; }
+            nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(10, 11, 16, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 30px; border-bottom: 1px solid var(--glass-border); }
+            nav.active { display: block; }
+            nav ul { flex-direction: column; gap: 20px; text-align: center; }
+            .hero { height: 45vh; margin-top: 70px; }
+            .slide-content h2 { font-size: 1.6rem; }
+            .play-btn { width: 75px; height: 75px; font-size: 28px; }
+            .app-download { text-align: center; justify-content: center; padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+    <canvas id="cursorCanvas"></canvas>
+
+    <!-- Header -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="images/logo.png" alt="Rj Aadhavan Radio Logo" class="logo-img">
+            <div class="logo-text">Rj Aadhavan Radio <span>| GTR</span></div>
+        </a>
+        <div class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <nav id="navMenu">
+            <ul>
+                <li><a href="index.html" class="active">முகப்பு</a></li>
+                <li><a href="#schedule">நிகழ்ச்சிகள்</a></li>
+                <li><a href="podcasts.html">போட்காஸ்ட்</a></li>
+                <li><a href="quiz.html">அறிவு ஜாக்பாட்</a></li>
+                <li><a href="about.html">எங்களைப் பற்றி</a></li>
+                <li><a href="app.html">செயலி (App)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Hero Slider -->
+    <div class="hero" id="home">
+        <div class="slide active" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1590602847861-f357a9332bbc?q=80&w=1200');">
+            <div class="slide-content">
+                <h2>இனிமையான தமிழ் இசை</h2>
+                <p>24 மணிநேரமும் இடைவிடாத நேரலை ஒலிபரப்பு</p>
+            </div>
+        </div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=1200');">
+            <div class="slide-content">
+                <h2>பிரபலமான போட்காஸ்ட்கள்</h2>
+                <p>உங்களுக்குப் பிடித்த தலைப்புகளில் சுவாரஸ்யமான உரையாடல்கள்</p>
+            </div>
+        </div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1478737270239-2f02b77fc618?q=80&w=1200');">
+            <div class="slide-content">
+                <h2>அதிநவீன டிஜிட்டல் ஸ்டுடியோ</h2>
+                <p>தெளிவான குரல் மற்றும் இசை அனுபவம்</p>
+            </div>
+        </div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1514525253161-7a46d19cd819?q=80&w=1200');">
+            <div class="slide-content">
+                <h2>இரவு நேர மெல்லிசைகள்</h2>
+                <p>மனதிற்கு இதமான பாடல்களுடன் உங்கள் இரவு நேரங்கள்</p>
+            </div>
+        </div>
+        <div class="slide" style="background-image: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200');">
+            <div class="slide-content">
+                <h2>உலகெங்கும் தமிழ் ஒலி</h2>
+                <p>உலகத் தமிழர்களை இணைக்கும் ஒரே வானொலி</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Center Horizontal Line Multi-Color Audio Visualizer & Play Button -->
+    <div class="visualizer-divider-wrapper">
+        <canvas id="visualizerCanvas"></canvas>
+        <button class="play-btn" id="livePlayBtn" onclick="toggleLiveStream()">
+            <i class="fa-solid fa-play" id="playIcon"></i>
+        </button>
+    </div>
+    <audio id="liveAudio" src="https://stream-159.zeno.fm/dsdb1twe8ueuv" crossorigin="anonymous"></audio>
+
+    <!-- UPDATED SCHEDULE SECTION (Order as requested) -->
+    <section id="schedule">
+        <h2 class="section-title">நிகழ்ச்சி நிரல்</h2>
+        <div class="grid-container-3col">
+            
+            <!-- 1. வணக்கம் G தமிழ் -->
+            <div class="card">
+                <img src="shows/01.jpg" class="gallery-img" alt="வணக்கம் G தமிழ்">
+                <h3>1. வணக்கம் G தமிழ்</h3>
+                <p class="schedule-days"><i class="fa-regular fa-calendar-days"></i> திங்கள் – வெள்ளி</p>
+                <p class="schedule-time"><i class="fa-regular fa-clock"></i> காலை 08:00 – 10:00</p>
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: 5px;">தினசரி செய்திகள், சுவாரஸ்ய தகவல்கள், இனிய பாடல்கள், வாழ்வியல் குறிப்புகள்</p>
+            </div>
+
+            <!-- 2. அந்தி வரும் நேரம் -->
+            <div class="card">
+                <img src="shows/02.jpg" class="gallery-img" alt="அந்தி வரும் நேரம்">
+                <h3>2. அந்தி வரும் நேரம்</h3>
+                <p class="schedule-days"><i class="fa-regular fa-calendar-days"></i> திங்கள் – வெள்ளி</p>
+                <p class="schedule-time"><i class="fa-regular fa-clock"></i> மாலை 04:00 – 06:00</p>
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: 5px;">மாலையின் இனிய தருணங்களை இசையாலும், மனம் கவரும் உரையாடல்களாலும், சுவாரஸ்ய தகவல்களாலும் அலங்கரிக்கும்</p>
+            </div>
+
+            <!-- 3. இரவின் நிழல் -->
+            <div class="card">
+                <img src="shows/03.jpg" class="gallery-img" alt="இரவின் நிழல்">
+                <h3>3. இரவின் நிழல்</h3>
+                <p class="schedule-days"><i class="fa-regular fa-calendar-days"></i> திங்கள் – வெள்ளி</p>
+                <p class="schedule-time"><i class="fa-regular fa-clock"></i> இரவு 09:00 – 11:00</p>
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: 5px;">இரவின் அமைதியோடு மனதை வருடும் இசை</p>
+            </div>
+
+            <!-- 4. இந்த வார ஹிட்ஸ் -->
+            <div class="card">
+                <img src="shows/04.jpg" class="gallery-img" alt="இந்த வார ஹிட்ஸ்">
+                <h3>4. இந்த வார ஹிட்ஸ்</h3>
+                <p class="schedule-days"><i class="fa-regular fa-calendar-days"></i> சனி</p>
+                <p class="schedule-time"><i class="fa-regular fa-clock"></i> காலை 08:00 – 10:00</p>
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: 5px;">வாரம் இரு நேயர்களின் விருப்பத்தேர்வுகளின் அடிப்படையில்</p>
+            </div>
+
+            <!-- 5. தத்துவ முத்துக்கள் -->
+            <div class="card">
+                <img src="shows/05.jpg" class="gallery-img" alt="தத்துவ முத்துக்கள்">
+                <h3>5. தத்துவ முத்துக்கள்</h3>
+                <p class="schedule-days"><i class="fa-regular fa-calendar-days"></i> சனி</p>
+                <p class="schedule-time"><i class="fa-regular fa-clock"></i> மாலை 04:00 – 06:00</p>
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: 5px;">பழைய பாடல்களை தத்துவ முத்துக்களாக வரிகளோடு சேர்த்து</p>
+            </div>
+
+            <!-- 6. இதய வீணை -->
+            <div class="card">
+                <img src="shows/06.jpg" class="gallery-img" alt="இதய வீணை">
+                <h3>6. இதய வீணை</h3>
+                <p class="schedule-days"><i class="fa-regular fa-calendar-days"></i> சனி</p>
+                <p class="schedule-time"><i class="fa-regular fa-clock"></i> இரவு 10:00 – 12:00</p>
+                <p style="color: var(--text-dim); font-size: 0.88rem; margin-top: 5px;">கலகலப்பான இரவு வேளையில் மெல்லிசை மெட்டுக்களுடன் காதல் கீதங்கள்</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Podcasts Section (Updated to match same 6 Shows) -->
+    <section id="podcasts" style="background: rgba(0,0,0,0.3);">
+        <h2 class="section-title">பிரபல போட்காஸ்ட்கள்</h2>
+        <div class="grid-container-3col">
+            
+            <div class="podcast-card">
+                <img src="shows/01.jpg" class="gallery-img" alt="வணக்கம் G தமிழ் Logo">
+                <h3>1. வணக்கம் G தமிழ்</h3>
+                <p>தினசரி செய்திகள், சுவாரஸ்ய தகவல்கள், இனிய பாடல்கள் மற்றும் வாழ்வியல் குறிப்புகள்.</p>
+                <a href="podcasts.html#podcast1" class="podcast-btn">
+                    <i class="fa-solid fa-headphones"></i> நிகழ்ச்சியைக் கேட்க கிளிக் செய்க
+                </a>
+            </div>
+
+            <div class="podcast-card">
+                <img src="shows/02.jpg" class="gallery-img" alt="அந்தி வரும் நேரம் Logo">
+                <h3>2. அந்தி வரும் நேரம்</h3>
+                <p>மாலையின் இனிய தருணங்களை இசையாலும், மனம் கவரும் உரையாடல்களாலும் அலங்கரிக்கும்.</p>
+                <a href="podcasts.html#podcast2" class="podcast-btn">
+                    <i class="fa-solid fa-headphones"></i> நிகழ்ச்சியைக் கேட்க கிளிக் செய்க
+                </a>
+            </div>
+
+            <div class="podcast-card">
+                <img src="shows/03.jpg" class="gallery-img" alt="இரவின் நிழல் Logo">
+                <h3>3. இரவின் நிழல்</h3>
+                <p>இரவின் அமைதியோடு மனதை வருடும் மெல்லிசை பாடல்கள்.</p>
+                <a href="podcasts.html#podcast3" class="podcast-btn">
+                    <i class="fa-solid fa-headphones"></i> நிகழ்ச்சியைக் கேட்க கிளிக் செய்க
+                </a>
+            </div>
+
+            <div class="podcast-card">
+                <img src="shows/04.jpg" class="gallery-img" alt="இந்த வார ஹிட்ஸ் Logo">
+                <h3>4. இந்த வார ஹிட்ஸ்</h3>
+                <p>நேயர்களின் விருப்பத்தேர்வுகளின் அடிப்படையில் சூப்பர் ஹிட் பாடல்கள்.</p>
+                <a href="podcasts.html#podcast4" class="podcast-btn">
+                    <i class="fa-solid fa-headphones"></i> நிகழ்ச்சியைக் கேட்க கிளிக் செய்க
+                </a>
+            </div>
+
+            <div class="podcast-card">
+                <img src="shows/05.jpg" class="gallery-img" alt="தத்துவ முத்துக்கள் Logo">
+                <h3>5. தத்துவ முத்துக்கள்</h3>
+                <p>பழைய பாடல்களை தத்துவ முத்துக்களாக வரிகளோடு சேர்த்து ரசிக்கும் தொகுப்பு.</p>
+                <a href="podcasts.html#podcast5" class="podcast-btn">
+                    <i class="fa-solid fa-headphones"></i> நிகழ்ச்சியைக் கேட்க கிளிக் செய்க
+                </a>
+            </div>
+
+            <div class="podcast-card">
+                <img src="shows/06.jpg" class="gallery-img" alt="இதய வீணை Logo">
+                <h3>6. இதய வீணை</h3>
+                <p>கலகலப்பான இரவு வேளையில் மெல்லிசை மெட்டுக்களுடன் காதல் கீதங்கள்.</p>
+                <a href="podcasts.html#podcast6" class="podcast-btn">
+                    <i class="fa-solid fa-headphones"></i> நிகழ்ச்சியைக் கேட்க கிளிக் செய்க
+                </a>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section id="about">
+        <h2 class="section-title">எங்களைப் பற்றி</h2>
+        <div style="max-width: 850px; margin: 0 auto; text-align: center; line-height: 1.9; color: var(--text-dim); background: var(--glass-bg); padding: 40px; border-radius: 20px; border: 1px solid var(--glass-border); backdrop-filter: blur(10px);">
+            <p>Rj Aadhavan Radio | GTR என்பது உலகம் முழுவதும் வாழும் தமிழ் மக்களுக்காக உருவாக்கப்பட்ட ஒரு அதிநவீன ஆன்லைன் வானொலியாகும். உங்கள் அன்றாட வாழ்விற்குத் தேவையான பொழுதுபோக்கு, இசை, செய்திகள் மற்றும் சிந்தனைமிக்க போட்காஸ்ட்களை நாங்கள் வழங்கி வருகிறோம்.</p>
+        </div>
+    </section>
+
+    <!-- App Download Section -->
+    <section id="app">
+        <div class="app-download">
+            <div class="app-text">
+                <h2>எங்களது Android செயலியை பதிவிறக்கம் செய்யுங்கள்!</h2>
+                <p style="color: var(--text-dim); margin-bottom: 25px;">கூகிள் பிளே ஸ்டோரிலிருந்து `RJ Aadhavan Radio` செயலியை உடனே பதிவிறக்குங்கள்.</p>
+                <a href="https://play.google.com/store/apps/details?id=com.aadhavan.radio" target="_blank" class="playstore-btn">
+                    <i class="fa-brands fa-google-play"></i>
+                    <div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: #aaa;">GET IT ON</div>
+                        <div style="font-size: 19px; font-weight: 700;">Google Play</div>
+                    </div>
+                </a>
+            </div>
+            <div>
+                <i class="fa-solid fa-mobile-screen-button" style="font-size: 130px; color: var(--secondary-glow); text-shadow: 0 0 20px var(--secondary-glow);"></i>
+            </div>
+        </div>
+    </section>
+
+    <!-- Bouncing Quiz Floating Button (Top of WhatsApp) -->
+    <a href="quiz.html" class="quiz-float" title="அறிவு ஜாக்பாட்">
+        <img src="images/arivu.png" alt="அறிவு ஜாக்பாட்">
+    </a>
+
+    <!-- Floating WhatsApp -->
+    <a href="https://wa.me/94783744142" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer>
+        <div class="clock-container">
+            <div class="clock-box">
+                <h4>இலங்கை / இந்திய நேரம் (SL/IN)</h4>
+                <div id="slClock">00:00:00</div>
+            </div>
+            <div class="clock-box">
+                <h4>ஜெர்மனி நேரம் (Germany)</h4>
+                <div id="gerClock">00:00:00</div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Rj Aadhavan Radio | GTR. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        // Hero Slider
+        let slides = document.querySelectorAll('.slide');
+        let currentSlide = 0;
+        setInterval(() => {
+            slides[currentSlide].classList.remove('active');
+            currentSlide = (currentSlide + 1) % slides.length;
+            slides[currentSlide].classList.add('active');
+        }, 5000);
+
+        // Clocks
+        function updateClocks() {
+            const now = new Date();
+            document.getElementById('slClock').innerText = now.toLocaleTimeString('ta-IN', { timeZone: 'Asia/Colombo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            document.getElementById('gerClock').innerText = now.toLocaleTimeString('ta-IN', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        /* Real-time Multi-Color Linear Audio Visualizer Across the Center Line */
+        const liveAudio = document.getElementById('liveAudio');
+        const playIcon = document.getElementById('playIcon');
+        const visCanvas = document.getElementById('visualizerCanvas');
+        const visCtx = visCanvas.getContext('2d');
+        
+        let audioCtx, analyser, source, dataArray;
+        let isPlaying = false;
+        let visualizerInitialized = false;
+
+        function resizeVisCanvas() {
+            visCanvas.width = window.innerWidth;
+            visCanvas.height = 100;
+        }
+        window.addEventListener('resize', resizeVisCanvas);
+        resizeVisCanvas();
+
+        function initAudioVisualizer() {
+            if (visualizerInitialized) return;
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            analyser = audioCtx.createAnalyser();
+            source = audioCtx.createMediaElementSource(liveAudio);
+            source.connect(analyser);
+            analyser.connect(audioCtx.destination);
+            analyser.fftSize = 128; 
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            visualizerInitialized = true;
+        }
+
+        function toggleLiveStream() {
+            if (!visualizerInitialized) {
+                initAudioVisualizer();
+            }
+            if (audioCtx && audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (!isPlaying) {
+                liveAudio.play().then(() => {
+                    playIcon.className = 'fa-solid fa-pause';
+                    isPlaying = true;
+                    drawLinearVisualizer();
+                }).catch(err => console.log(err));
+            } else {
+                liveAudio.pause();
+                playIcon.className = 'fa-solid fa-play';
+                isPlaying = false;
+            }
+        }
+
+        const multiColors = ['#ff007f', '#ff5e00', '#ffea00', '#00ff88', '#00e5ff', '#a100ff', '#ff00d4'];
+
+        function drawLinearVisualizer() {
+            if (!isPlaying) {
+                visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
+                return;
+            }
+
+            requestAnimationFrame(drawLinearVisualizer);
+            analyser.getByteFrequencyData(dataArray);
+
+            visCtx.clearRect(0, 0, visCanvas.width, visCanvas.height);
+            
+            const width = visCanvas.width;
+            const height = visCanvas.height;
+            const centerY = height / 2;
+            const centerX = width / 2;
+            const buttonGap = 65; // Gap around center play button
+
+            const barWidth = 4;
+            const barGap = 6;
+            const totalBarsPerSide = Math.floor((centerX - buttonGap) / (barWidth + barGap));
+
+            // Draw Left Side Bars
+            for (let i = 0; i < totalBarsPerSide; i++) {
+                const value = dataArray[i % dataArray.length];
+                const barHeight = (value / 255) * 42; 
+                const x = (centerX - buttonGap) - (i * (barWidth + barGap));
+
+                const color = multiColors[i % multiColors.length];
+                visCtx.fillStyle = color;
+                visCtx.shadowColor = color;
+                visCtx.shadowBlur = 10;
+
+                // Draw symmetrical bar up & down from center line
+                visCtx.fillRect(x, centerY - (barHeight / 2), barWidth, barHeight + 2);
+            }
+
+            // Draw Right Side Bars
+            for (let i = 0; i < totalBarsPerSide; i++) {
+                const value = dataArray[i % dataArray.length];
+                const barHeight = (value / 255) * 42; 
+                const x = (centerX + buttonGap) + (i * (barWidth + barGap));
+
+                const color = multiColors[i % multiColors.length];
+                visCtx.fillStyle = color;
+                visCtx.shadowColor = color;
+                visCtx.shadowBlur = 10;
+
+                // Draw symmetrical bar up & down from center line
+                visCtx.fillRect(x, centerY - (barHeight / 2), barWidth, barHeight + 2);
+            }
+        }
+
+        /* Smooth Cursor Trail Effect */
+        const canvas = document.getElementById('cursorCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const smallMusicElements = ['🎵', '🎶', '🎼', '✨'];
+
+        class SmoothCursorParticle {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 8;
+                this.y = y + (Math.random() - 0.5) * 8;
+                this.type = Math.random() < 0.7 ? 'symbol' : 'glowCircle'; 
+                this.symbol = smallMusicElements[Math.floor(Math.random() * smallMusicElements.length)];
+                this.fontSize = Math.random() * 6 + 10;
+                this.radius = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = -Math.random() * 1 - 0.5;
+                this.color = multiColors[Math.floor(Math.random() * multiColors.length)];
+                this.life = 1.0; 
+                this.fadeSpeed = Math.random() * 0.015 + 0.015;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= this.fadeSpeed;
+                if(this.type === 'glowCircle') this.radius += 0.15;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(this.life, 0);
+
+                if (this.type === 'symbol') {
+                    ctx.font = `${this.fontSize}px Arial`;
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 6;
+                    ctx.fillText(this.symbol, this.x, this.y);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        let lastX = 0, lastY = 0;
+        document.addEventListener('mousemove', (e) => {
+            const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
+            if (dist > 8) { 
+                particles.push(new SmoothCursorParticle(e.clientX, e.clientY));
+                lastX = e.clientX;
+                lastY = e.clientY;
+            }
+        });
+
+        function renderCursorEffect() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(renderCursorEffect);
+        }
+        renderCursorEffect();
+    </script>
+</body>
+</html>

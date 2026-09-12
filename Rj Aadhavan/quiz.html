@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>அறிவு ஜாக்பாட் | RJ Aadhavan Radio</title>
+
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@600;700;800&family=Kavivanar&family=Mukta+Malar:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <!-- Confetti Particle Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        :root {
+            --gold-primary: #ffd700;
+            --gold-gradient: linear-gradient(135deg, #bf953f 0%, #fcf6ba 25%, #b38728 50%, #fbf5b7 75%, #aa771c 100%);
+            --gold-border: linear-gradient(90deg, #d4af37, #fff6ad, #aa771c, #fcf6ba);
+            --dark-blue-bg: #030a1c;
+            --card-blue: rgba(5, 18, 48, 0.92);
+            
+            --font-question: 'Kavivanar', 'Anek Tamil', cursive, sans-serif;
+            --font-options: 'Mukta Malar', sans-serif;
+            --font-general: 'Anek Tamil', sans-serif;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: var(--font-general); }
+
+        body {
+            background-color: var(--dark-blue-bg);
+            color: #ffffff;
+            background-image: 
+                radial-gradient(circle at 50% 20%, rgba(0, 119, 255, 0.25) 0%, transparent 60%),
+                radial-gradient(circle at 50% 80%, rgba(0, 210, 255, 0.15) 0%, transparent 50%);
+            min-height: 100vh;
+            overflow-x: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        /* Header Navigation Bar */
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 5%;
+            background: rgba(3, 10, 28, 0.95);
+            backdrop-filter: blur(10px);
+            position: fixed;
+            width: 100%;
+            top: 0;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(212, 175, 55, 0.3);
+            height: 60px;
+        }
+
+        .logo-container { display: flex; align-items: center; gap: 10px; text-decoration: none; }
+        .logo-img { height: 35px; width: auto; }
+        .logo-text { font-size: 15px; font-weight: 700; color: #fff; }
+        .logo-text span { color: var(--gold-primary); font-size: 11px; display: block; }
+
+        .nav-links { display: flex; gap: 15px; align-items: center; }
+        .nav-links a { color: #fff; text-decoration: none; font-weight: 600; font-size: 13px; transition: 0.3s; }
+        .nav-links a:hover, .nav-links a.active { color: var(--gold-primary); }
+
+        /* Sound Control Button */
+        .sound-btn {
+            background: rgba(255, 215, 0, 0.2);
+            border: 1px solid var(--gold-primary);
+            color: var(--gold-primary);
+            padding: 5px 12px;
+            border-radius: 15px;
+            cursor: pointer;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        /* Poster Outer Wrapper */
+        .poster-wrapper {
+            width: 92%;
+            max-width: 450px;
+            background: rgba(3, 12, 34, 0.95);
+            border-radius: 20px;
+            padding: 15px;
+            box-shadow: 0 0 35px rgba(0, 140, 255, 0.4);
+            border: 2px solid #1a4b8c;
+            text-align: center;
+            position: relative;
+            margin-top: 70px;
+            margin-bottom: 30px;
+        }
+
+        .poster-logo-img {
+            width: 75px; 
+            height: 75px; 
+            border-radius: 50%; 
+            object-fit: cover;
+            border: 2px solid var(--gold-primary); 
+            box-shadow: 0 0 15px rgba(255, 215, 0, 0.6);
+            margin-bottom: 10px;
+        }
+
+        /* Question Box Styling */
+        .question-poster-card {
+            background: var(--card-blue); position: relative; border-radius: 12px;
+            padding: 12px; margin-bottom: 12px; border: 2px solid transparent; background-clip: padding-box;
+        }
+        .question-poster-card::before {
+            content: ''; position: absolute; top: -2px; bottom: -2px; left: -2px; right: -2px;
+            background: var(--gold-border); border-radius: 14px; z-index: -1;
+        }
+
+        .question-number-badge {
+            display: inline-block; background: var(--gold-gradient); color: #000;
+            font-weight: 800; padding: 2px 10px; border-radius: 12px; font-size: 0.75rem; margin-bottom: 6px;
+        }
+
+        .question-text { 
+            font-family: var(--font-question);
+            font-size: 1.1rem; 
+            font-weight: 700; 
+            line-height: 1.4; 
+            color: #ffffff;
+            text-shadow: 0 2px 8px rgba(0, 0, 0, 0.8);
+        }
+
+        /* Options Grid */
+        .options-list { display: flex; flex-direction: column; gap: 8px; }
+        .option-poster-btn {
+            background: rgba(4, 18, 48, 0.9); border-radius: 25px; padding: 4px 10px 4px 4px;
+            display: flex; align-items: center; cursor: pointer; border: 1.5px solid #d4af37;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .option-badge {
+            width: 32px; height: 32px; background: var(--gold-gradient); color: #000; font-size: 0.95rem;
+            font-weight: 800; display: flex; align-items: center; justify-content: center;
+            clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%); margin-right: 10px; flex-shrink: 0;
+        }
+
+        .option-text-val { 
+            font-family: var(--font-options);
+            font-size: 0.95rem; 
+            font-weight: 700; 
+            color: #ffffff; 
+            text-align: left; 
+            flex-grow: 1; 
+        }
+        
+        .option-poster-btn.correct { background: rgba(0, 200, 83, 0.3) !important; border-color: #00e676 !important; }
+        .option-poster-btn.wrong { background: rgba(255, 23, 68, 0.3) !important; border-color: #ff1744 !important; }
+        .option-poster-btn.disabled { pointer-events: none; }
+
+        .next-poster-btn {
+            margin-top: 12px; padding: 8px 24px; background: var(--gold-gradient); color: #000;
+            border: none; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: none;
+        }
+
+        /* Floating Social Bar (Screen Left Side) */
+        .floating-social-bar {
+            position: fixed;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            z-index: 999;
+        }
+
+        .social-btn {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 18px;
+            text-decoration: none;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .social-btn:hover {
+            transform: scale(1.15);
+            box-shadow: 0 6px 18px rgba(255, 215, 0, 0.4);
+        }
+
+        .social-btn.youtube { background: #ff0000; }
+        .social-btn.facebook { background: #1877f2; }
+        .social-btn.tiktok { background: #000000; border: 1px solid rgba(255,255,255,0.2); }
+        .social-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
+        .social-btn.telegram { background: #0088cc; }
+
+        /* Floating WhatsApp Button (Screen Right Side) */
+        .whatsapp-float {
+            position: fixed; width: 48px; height: 48px; bottom: 20px; right: 20px;
+            background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center;
+            font-size: 26px; box-shadow: 2px 2px 10px rgba(0,0,0,0.4); z-index: 1000;
+            display: flex; align-items: center; justify-content: center; text-decoration: none; transition: transform 0.3s;
+        }
+        .whatsapp-float:hover { transform: scale(1.1); }
+
+        .wa-send-btn {
+            background-color: #25d366; color: white; padding: 10px 18px; border-radius: 20px;
+            text-decoration: none; font-weight: 700; display: inline-block; margin-top: 10px;
+            box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4); font-size: 0.9rem;
+        }
+
+        /* Poster Footer Bar & Footer Social Icons */
+        .poster-footer-bar {
+            margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 215, 0, 0.2);
+            display: flex; flex-direction: column; gap: 8px; align-items: center; font-size: 0.75rem; color: rgba(255, 255, 255, 0.8);
+        }
+
+        .footer-social-icons {
+            display: flex;
+            gap: 12px;
+            margin-top: 4px;
+        }
+
+        .footer-social-icons a {
+            color: var(--gold-primary);
+            font-size: 15px;
+            transition: color 0.3s, transform 0.3s;
+        }
+
+        .footer-social-icons a:hover {
+            color: #ffffff;
+            transform: scale(1.2);
+        }
+
+        .footer-info {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            font-size: 0.7rem;
+            color: rgba(255, 255, 255, 0.6);
+        }
+
+        /* Mobile Optimization */
+        @media (max-width: 600px) {
+            .floating-social-bar {
+                left: 8px;
+                gap: 8px;
+            }
+            .social-btn {
+                width: 35px;
+                height: 35px;
+                font-size: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Header Navigation Bar -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="images/arivu.png" alt="Logo" class="logo-img">
+            <div class="logo-text">RJ Aadhavan Radio <span>| Quiz Station</span></div>
+        </a>
+        <nav class="nav-links">
+            <button class="sound-btn" onclick="toggleAudio()">
+                <i id="soundIcon" class="fa-solid fa-volume-high"></i>
+            </button>
+            <a href="quiz.html" class="active">அறிவு ஜாக்பாட்</a>
+        </nav>
+    </header>
+
+    <!-- Floating Social Media Bar (Runs during Quiz) -->
+    <div class="floating-social-bar">
+        <a href="https://youtube.com" target="_blank" class="social-btn youtube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+        <a href="https://facebook.com" target="_blank" class="social-btn facebook" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+        <a href="https://tiktok.com" target="_blank" class="social-btn tiktok" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+        <a href="https://instagram.com" target="_blank" class="social-btn instagram" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+        <a href="https://t.me" target="_blank" class="social-btn telegram" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+    </div>
+
+    <!-- Quiz Poster Wrapper -->
+    <div class="poster-wrapper">
+        <img src="images/arivu.png" class="poster-logo-img" alt="Logo">
+
+        <div id="quizContainer">
+            <div class="question-poster-card">
+                <span class="question-number-badge" id="qNumber">கேள்வி 1</span>
+                <div class="question-text" id="qText">கேள்விகள் லோடு ஆகிறது...</div>
+            </div>
+
+            <div class="options-list" id="optionsContainer"></div>
+
+            <button class="next-poster-btn" id="nextBtn" onclick="nextQuestion()">அடுத்த கேள்வி <i class="fa-solid fa-arrow-right"></i></button>
+        </div>
+
+        <!-- Score & WhatsApp Update Box -->
+        <div id="scoreBox" style="display:none; padding: 10px;">
+            <h2 id="scoreTitle" style="font-size: 1.3rem;"></h2>
+            <p id="scoreText" style="margin: 12px 0; font-size:1rem; line-height:1.5;"></p>
+            
+            <a id="waShareBtn" href="#" target="_blank" class="wa-send-btn">
+                <i class="fa-brands fa-whatsapp"></i> வாட்ஸ்அப்பில் முடிவை அனுப்பு
+            </a>
+            <br><br>
+            <button onclick="location.reload()" class="next-poster-btn" style="display:inline-block;">மீண்டும் விளையாட <i class="fa-solid fa-rotate-right"></i></button>
+        </div>
+
+        <!-- Footer Section with Social Media Icons -->
+        <div class="poster-footer-bar">
+            <div class="footer-social-icons">
+                <a href="https://youtube.com" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
+                <a href="https://facebook.com" target="_blank" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
+                <a href="https://tiktok.com" target="_blank" title="TikTok"><i class="fa-brands fa-tiktok"></i></a>
+                <a href="https://instagram.com" target="_blank" title="Instagram"><i class="fa-brands fa-instagram"></i></a>
+                <a href="https://t.me" target="_blank" title="Telegram"><i class="fa-brands fa-telegram"></i></a>
+            </div>
+            <div class="footer-info">
+                <div>@arivujackpot</div>
+                <div>© Arivu Jackpot 2026</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/94783744142?text=வணக்கம்,%20நான்%20அறிவு%20ஜாக்பாட்%20விளையாட%20விரும்புகிறேன்!" class="whatsapp-float" target="_blank" title="WhatsApp">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Local Audio Files -->
+    <audio id="bgMusic" loop src="audio/bg-music.mp3"></audio>
+    <audio id="correctSound" src="audio/correct.mp3"></audio>
+    <audio id="wrongSound" src="audio/wrong.mp3"></audio>
+    <audio id="winSound" src="audio/win.mp3"></audio>
+    <audio id="tryAgainSound" src="audio/try-again.mp3"></audio>
+
+    <script>
+        const ADMIN_WA_NUMBER = "94783744142";
+        
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9hz2YYSzTZT9nKvrJZ3cFYPx-CT-h9YVSmLgaQ3dGLUywPv04p5tHXVRoY1UrIzUAMekcdFW_htrZ/gviz/tq?tqx=out:json&gid=1886398175';
+
+        // ஆடியோ எலிமெண்ட்கள்
+        const bgMusic = document.getElementById('bgMusic');
+        const correctSound = document.getElementById('correctSound');
+        const wrongSound = document.getElementById('wrongSound');
+        const winSound = document.getElementById('winSound');
+        const tryAgainSound = document.getElementById('tryAgainSound');
+        
+        let isMuted = false;
+
+        function toggleAudio() {
+            isMuted = !isMuted;
+            const icon = document.getElementById('soundIcon');
+            if(isMuted) {
+                bgMusic.pause();
+                icon.className = "fa-solid fa-volume-xmark";
+            } else {
+                bgMusic.play().catch(()=>{});
+                icon.className = "fa-solid fa-volume-high";
+            }
+        }
+
+        const optionLabels = ["A", "B", "C", "D"];
+        let quizData = [];
+        let currentQIndex = 0;
+        let score = 0;
+
+        async function fetchQuestionsFromSheet() {
+            try {
+                const response = await fetch(SHEET_URL);
+                const text = await response.text();
+                const json = JSON.parse(text.substring(47, text.length - 2));
+                const rows = json.table.rows;
+
+                let fetchedData = [];
+                rows.forEach((row, index) => {
+                    if (index === 0) return;
+                    if(row.c && row.c[0] && row.c[0].v) {
+                        fetchedData.push({
+                            question: row.c[0] ? row.c[0].v : "",
+                            options: [
+                                row.c[1] ? row.c[1].v : "",
+                                row.c[2] ? row.c[2].v : "",
+                                row.c[3] ? row.c[3].v : "",
+                                row.c[4] ? row.c[4].v : ""
+                            ],
+                            correct: row.c[5] ? parseInt(row.c[5].v) : 0
+                        });
+                    }
+                });
+
+                quizData = fetchedData.reverse();
+
+                if(quizData.length > 0) {
+                    loadQuestion();
+                } else {
+                    document.getElementById('qText').innerText = "கேள்விகள் எதுவும் கிடைக்கவில்லை!";
+                }
+
+            } catch (error) {
+                console.error("Sheet Error:", error);
+                document.getElementById('qText').innerText = "கூகுள் சீட் தரவுகளை லோடு செய்வதில் பிழை ஏற்பட்டது.";
+            }
+        }
+
+        function loadQuestion() {
+            const currentData = quizData[currentQIndex];
+            document.getElementById('qNumber').innerText = `கேள்வி ${currentQIndex + 1} / ${quizData.length}`;
+            document.getElementById('qText').innerText = currentData.question;
+            
+            const optionsContainer = document.getElementById('optionsContainer');
+            optionsContainer.innerHTML = '';
+            document.getElementById('nextBtn').style.display = 'none';
+
+            currentData.options.forEach((optText, index) => {
+                const btn = document.createElement('div');
+                btn.className = 'option-poster-btn';
+                btn.innerHTML = `
+                    <div class="option-badge">${optionLabels[index]}</div>
+                    <div class="option-text-val">${optText}</div>
+                `;
+                btn.onclick = () => selectOption(index, btn);
+                optionsContainer.appendChild(btn);
+            });
+        }
+
+        function triggerConfetti() {
+            confetti({ particleCount: 40, angle: 60, spread: 55, origin: { x: 0, y: 0.7 } });
+            confetti({ particleCount: 40, angle: 120, spread: 55, origin: { x: 1, y: 0.7 } });
+        }
+
+        function selectOption(selectedIndex, selectedBtn) {
+            if(!isMuted && bgMusic.paused) { 
+                bgMusic.play().catch(()=>{}); 
+            }
+
+            const currentData = quizData[currentQIndex];
+            const allBtns = document.querySelectorAll('.option-poster-btn');
+
+            allBtns.forEach((btn, idx) => {
+                btn.classList.add('disabled');
+                if (idx === currentData.correct) {
+                    btn.classList.add('correct');
+                }
+            });
+
+            if (selectedIndex === currentData.correct) {
+                score++;
+                if(!isMuted) correctSound.play();
+                triggerConfetti();
+            } else {
+                selectedBtn.classList.add('wrong');
+                if(!isMuted) wrongSound.play();
+            }
+
+            document.getElementById('nextBtn').style.display = 'inline-block';
+        }
+
+        function nextQuestion() {
+            currentQIndex++;
+            if (currentQIndex < quizData.length) {
+                loadQuestion();
+            } else {
+                showFinalScore();
+            }
+        }
+
+        function showFinalScore() {
+            bgMusic.pause();
+
+            document.getElementById('quizContainer').style.display = 'none';
+            document.getElementById('scoreBox').style.display = 'block';
+
+            const passMark = Math.ceil(quizData.length / 2);
+
+            if (score >= passMark) {
+                if (!isMuted) winSound.play();
+                triggerConfetti();
+
+                document.getElementById('scoreTitle').innerHTML = `<i class="fa-solid fa-trophy" style="color:var(--gold-primary);"></i> வாழ்த்துகள்!`;
+                document.getElementById('scoreText').innerText = `நீங்கள் ${quizData.length}-க்கு ${score} மதிப்பெண்கள் பெற்று சிறப்பான வெற்றியைப் பதிவு செய்துள்ளீர்கள்!`;
+            } else {
+                if (!isMuted) tryAgainSound.play();
+
+                document.getElementById('scoreTitle').innerHTML = `<i class="fa-solid fa-heart-pulse" style="color:#ff4757;"></i> தொடர் முயற்சி சிறந்தது!`;
+                document.getElementById('scoreText').innerHTML = `
+                    நீங்கள் ${quizData.length}-க்கு ${score} மதிப்பெண்கள் பெற்றுள்ளீர்கள்.<br><br>
+                    <span style="font-size: 0.95rem; color: #fbc531;">
+                    "தோல்வி என்பது அடுத்த வெற்றிக்கான முதல் படி! மீண்டும் ஒருமுறை முயன்று பாருங்கள், நிச்சயம் முழு மதிப்பெண் பெறலாம்."
+                    </span>
+                `;
+            }
+            
+            const message = `வணக்கம்!%20நான்%20அறிவு%20ஜாக்பாட்%20போட்டியில்%20பங்கேற்று%20${quizData.length}-க்கு%20${score}%20மதிப்பெண்கள்%20பெற்றுள்ளேன்!`;
+            document.getElementById('waShareBtn').href = `https://wa.me/${ADMIN_WA_NUMBER}?text=${message}`;
+        }
+
+        fetchQuestionsFromSheet();
+    </script>
+</body>
+</html>

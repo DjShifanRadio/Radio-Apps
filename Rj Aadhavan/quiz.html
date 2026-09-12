@@ -162,7 +162,7 @@
             border: none; border-radius: 20px; font-weight: 800; font-size: 0.85rem; cursor: pointer; display: none;
         }
 
-        /* Floating Social Bar (Screen Left Side) */
+        /* Floating Social Bar */
         .floating-social-bar {
             position: fixed;
             left: 15px;
@@ -199,7 +199,7 @@
         .social-btn.instagram { background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888); }
         .social-btn.telegram { background: #0088cc; }
 
-        /* Floating WhatsApp Button (Screen Right Side) */
+        /* Floating WhatsApp Button */
         .whatsapp-float {
             position: fixed; width: 48px; height: 48px; bottom: 20px; right: 20px;
             background-color: #25d366; color: #FFF; border-radius: 50px; text-align: center;
@@ -214,48 +214,20 @@
             box-shadow: 0 4px 10px rgba(37, 211, 102, 0.4); font-size: 0.9rem;
         }
 
-        /* Poster Footer Bar & Footer Social Icons */
+        /* Footer Section */
         .poster-footer-bar {
             margin-top: 12px; padding-top: 10px; border-top: 1px solid rgba(255, 215, 0, 0.2);
             display: flex; flex-direction: column; gap: 8px; align-items: center; font-size: 0.75rem; color: rgba(255, 255, 255, 0.8);
         }
 
-        .footer-social-icons {
-            display: flex;
-            gap: 12px;
-            margin-top: 4px;
-        }
+        .footer-social-icons { display: flex; gap: 12px; margin-top: 4px; }
+        .footer-social-icons a { color: var(--gold-primary); font-size: 15px; transition: color 0.3s, transform 0.3s; }
+        .footer-social-icons a:hover { color: #ffffff; transform: scale(1.2); }
+        .footer-info { display: flex; justify-content: space-between; width: 100%; font-size: 0.7rem; color: rgba(255, 255, 255, 0.6); }
 
-        .footer-social-icons a {
-            color: var(--gold-primary);
-            font-size: 15px;
-            transition: color 0.3s, transform 0.3s;
-        }
-
-        .footer-social-icons a:hover {
-            color: #ffffff;
-            transform: scale(1.2);
-        }
-
-        .footer-info {
-            display: flex;
-            justify-content: space-between;
-            width: 100%;
-            font-size: 0.7rem;
-            color: rgba(255, 255, 255, 0.6);
-        }
-
-        /* Mobile Optimization */
         @media (max-width: 600px) {
-            .floating-social-bar {
-                left: 8px;
-                gap: 8px;
-            }
-            .social-btn {
-                width: 35px;
-                height: 35px;
-                font-size: 15px;
-            }
+            .floating-social-bar { left: 8px; gap: 8px; }
+            .social-btn { width: 35px; height: 35px; font-size: 15px; }
         }
     </style>
 </head>
@@ -275,7 +247,7 @@
         </nav>
     </header>
 
-    <!-- Floating Social Media Bar (Runs during Quiz) -->
+    <!-- Floating Social Media Bar -->
     <div class="floating-social-bar">
         <a href="https://youtube.com" target="_blank" class="social-btn youtube" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
         <a href="https://facebook.com" target="_blank" class="social-btn facebook" title="Facebook"><i class="fa-brands fa-facebook-f"></i></a>
@@ -311,7 +283,7 @@
             <button onclick="location.reload()" class="next-poster-btn" style="display:inline-block;">மீண்டும் விளையாட <i class="fa-solid fa-rotate-right"></i></button>
         </div>
 
-        <!-- Footer Section with Social Media Icons -->
+        <!-- Footer Section -->
         <div class="poster-footer-bar">
             <div class="footer-social-icons">
                 <a href="https://youtube.com" target="_blank" title="YouTube"><i class="fa-brands fa-youtube"></i></a>
@@ -342,8 +314,8 @@
     <script>
         const ADMIN_WA_NUMBER = "94783744142";
         
-        // உங்கள் Google Sheet பப்ளிக் JSON API URL
-        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9hz2YYSzTZT9nKvrJZ3cFYPx-CT-h9YVSmLgaQ3dGLUywPv04p5tHXVRoY1UrIzUAMekcdFW_htrZ/gviz/tq?tqx=out:json';
+        // Google Sheet GVIZ Endpoint
+        const SHEET_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR9hz2YYSzTZT9nKvrJZ3cFYPx-CT-h9YVSmLgaQ3dGLUywPv04p5tHXVRoY1UrIzUAMekcdFW_htrZ/gviz/tq?tqx=out:json&tq=';
 
         const bgMusic = document.getElementById('bgMusic');
         const correctSound = document.getElementById('correctSound');
@@ -370,28 +342,31 @@
         let currentQIndex = 0;
         let score = 0;
 
-        async function fetchQuestionsFromSheet() {
-            try {
-                const response = await fetch(SHEET_URL);
-                const text = await response.text();
-                
-                // Safe RegEx JSON Parser
-                const match = text.match(/google\.visualization\.Query\.setResponse\(([\s\S]*)\);/);
-                if (!match) throw new Error("Invalid response format");
-                
-                const data = JSON.parse(match[1]);
-                const rows = data.table.rows;
+        // Global Callback Handler for JSONP Fallback
+        window.google = window.google || {};
+        window.google.visualization = window.google.visualization || {};
+        window.google.visualization.Query = {
+            setResponse: function(response) {
+                processSheetData(response);
+            }
+        };
 
+        function processSheetData(data) {
+            try {
+                if (!data || !data.table || !data.table.rows) {
+                    throw new Error("No table rows found");
+                }
+                const rows = data.table.rows;
                 let fetchedData = [];
-                
+
                 rows.forEach((row) => {
                     if (row.c && row.c[0] && row.c[0].v !== null) {
                         const qVal = row.c[0].v.toString().trim();
                         
-                        // Header வரியை புறக்கணித்தல்
+                        // Header வரிகளைப் புறக்கணித்தல்
                         if (qVal.toLowerCase() === "question" || qVal === "கேள்வி") return;
 
-                        // Correct answer (1, 2, 3, 4) என்பதை JavaScript Array Index (0, 1, 2, 3) ஆக மாற்றுதல்
+                        // 1,2,3,4-ஐ Array Index 0,1,2,3-ஆக மாற்றுதல்
                         let rawCorrect = row.c[5] ? parseInt(row.c[5].v) : 1;
                         let correctIndex = (rawCorrect >= 1 && rawCorrect <= 4) ? rawCorrect - 1 : 0;
 
@@ -408,18 +383,44 @@
                     }
                 });
 
-                if(fetchedData.length > 0) {
-                    // புதிய கேள்விகள் முதலில் வர விரும்புமானால் reverse() பயன்படுத்தவும்
+                if (fetchedData.length > 0) {
                     quizData = fetchedData.reverse();
                     loadQuestion();
                 } else {
                     document.getElementById('qText').innerText = "கேள்விகள் எதுவும் பெறப்படவில்லை!";
                 }
-
-            } catch (error) {
-                console.error("Sheet Fetch Error:", error);
-                document.getElementById('qText').innerText = "கூகுள் சீட் தரவுகளை லோடு செய்வதில் பிழை ஏற்பட்டது.";
+            } catch (err) {
+                console.error("Data Processing Error:", err);
+                document.getElementById('qText').innerText = "தரவுகளைப் பிரித்தெடுப்பதில் பிழை ஏற்பட்டது.";
             }
+        }
+
+        async function fetchQuestionsFromSheet() {
+            // 1st Attempt: Standard Fetch
+            try {
+                const response = await fetch(SHEET_URL);
+                const text = await response.text();
+                
+                const startPos = text.indexOf('{');
+                const endPos = text.lastIndexOf('}') + 1;
+                
+                if (startPos !== -1 && endPos !== -1) {
+                    const jsonString = text.substring(startPos, endPos);
+                    const json = JSON.parse(jsonString);
+                    processSheetData({ table: json.table });
+                    return;
+                }
+            } catch (e) {
+                console.warn("Standard Fetch failed, trying Script Injection Fallback...", e);
+            }
+
+            // 2nd Attempt: Dynamic Script Tag (Bypasses CORS restrictions)
+            const script = document.createElement('script');
+            script.src = SHEET_URL;
+            script.onerror = function() {
+                document.getElementById('qText').innerText = "கூகுள் சீட் தரவுகளை லோடு செய்வதில் பிழை ஏற்பட்டது. Google Sheet Share Settings-ஐ சரிபார்க்கவும்.";
+            };
+            document.body.appendChild(script);
         }
 
         function loadQuestion() {

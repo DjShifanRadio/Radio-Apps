@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>எங்களைப் பற்றி | Rj Aadhavan Radio - GTR</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@300;400;500;600;700;800&family=Mukta+Malar:wght@400;500;600;700&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-glow: #00ff88;
+            --secondary-glow: #00e5ff;
+            --accent-pink: #ff007f;
+            --dark-bg: #050609;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(15px);
+            --text-light: #ffffff;
+            --text-dim: #b0b3c1;
+            
+            --font-tamil-primary: 'Anek Tamil', 'Mukta Malar', 'Poppins', sans-serif;
+            --font-tamil-heading: 'Mukta Malar', 'Anek Tamil', sans-serif;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: var(--font-tamil-primary); 
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 20%, #1a2035 0%, var(--dark-bg) 60%);
+            font-family: var(--font-tamil-primary);
+        }
+
+        h1, h2, h3, h4, h5, h6, .section-title, .logo-text {
+            font-family: var(--font-tamil-heading);
+        }
+
+        /* Smooth Music Cursor Canvas */
+        #cursorCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999; }
+
+        /* Header Navigation */
+        header {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 5%;
+            background: rgba(10, 11, 16, 0.75); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid var(--glass-border);
+        }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-img { height: 55px; width: auto; object-fit: contain; }
+        .logo-text { font-size: 22px; font-weight: 700; color: var(--text-light); }
+        .logo-text span { color: var(--secondary-glow); font-size: 16px; font-weight: 400; }
+
+        nav ul { display: flex; list-style: none; gap: 25px; }
+        nav a { color: var(--text-dim); text-decoration: none; font-weight: 500; transition: 0.3s; font-size: 15px; }
+        nav a:hover, nav a.active { color: var(--primary-glow); text-shadow: 0 0 10px var(--primary-glow); }
+        .mobile-menu-btn { display: none; font-size: 24px; color: #fff; cursor: pointer; }
+
+        /* Page Hero Section */
+        .page-hero {
+            height: 38vh;
+            margin-top: 75px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(5, 6, 9, 0.7), rgba(5, 6, 9, 0.9)), url('https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=1200') center/cover;
+            border-bottom: 1px solid var(--glass-border);
+            text-align: center;
+        }
+        .page-hero-content h1 { font-size: 2.8rem; font-weight: 800; color: #fff; margin-bottom: 10px; }
+        .page-hero-content p { color: var(--secondary-glow); font-size: 1.1rem; }
+
+        /* Floating Popup Player Button Section */
+        .popup-player-wrapper {
+            position: relative;
+            margin-top: -45px;
+            margin-bottom: 30px;
+            z-index: 500;
+            display: flex;
+            justify-content: center;
+        }
+        .popup-player-card {
+            background: rgba(15, 20, 32, 0.85);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            border-radius: 50px;
+            padding: 12px 28px;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 10px 30px rgba(0, 255, 136, 0.25), 0 0 15px rgba(0, 229, 255, 0.2);
+            transition: all 0.3s ease;
+        }
+        .popup-player-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0, 255, 136, 0.4);
+            border-color: var(--primary-glow);
+        }
+        .player-info-text { display: flex; flex-direction: column; text-align: left; }
+        .player-info-text span.title { font-size: 0.95rem; font-weight: 700; color: #fff; }
+        .player-info-text span.subtitle { font-size: 0.8rem; color: var(--primary-glow); }
+        
+        .popup-play-btn {
+            width: 55px; height: 55px;
+            background: linear-gradient(135deg, var(--accent-pink), var(--secondary-glow));
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 22px; color: #fff;
+            border: none; cursor: pointer;
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+            transition: 0.3s;
+        }
+        .popup-play-btn:hover { transform: scale(1.1); }
+
+        /* About Main Section - 2 Column Layout */
+        section { padding: 50px 5%; }
+        .about-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1.1fr 0.9fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .about-text-content {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            padding: 40px;
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+        }
+        .about-text-content h2 {
+            font-size: 2.2rem;
+            margin-bottom: 20px;
+            color: var(--primary-glow);
+            line-height: 1.3;
+        }
+        .about-text-content p {
+            color: var(--text-dim);
+            font-size: 1rem;
+            line-height: 1.8;
+            margin-bottom: 18px;
+        }
+        .about-features-list {
+            list-style: none;
+            margin-top: 20px;
+            margin-bottom: 30px;
+        }
+        .about-features-list li {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 12px;
+            color: var(--text-light);
+            font-weight: 500;
+        }
+        .about-features-list i {
+            color: var(--secondary-glow);
+            font-size: 1.1rem;
+        }
+
+        /* Animated Social & App Links Row */
+        .social-quick-links {
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid var(--glass-border);
+        }
+        .social-quick-links h4 {
+            font-size: 1rem;
+            color: var(--text-light);
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        .icons-flex-container {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        .quick-icon-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--glass-border);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #fff;
+            font-size: 20px;
+            text-decoration: none;
+            transition: all 0.4s ease;
+            animation: floatIcon 3s ease-in-out infinite alternate;
+        }
+
+        /* Continuous Floating Animation with Delay */
+        @keyframes floatIcon {
+            0% { transform: translateY(0px); }
+            100% { transform: translateY(-8px); }
+        }
+
+        .quick-icon-btn:nth-child(1) { animation-delay: 0s; color: #25d366; }
+        .quick-icon-btn:nth-child(2) { animation-delay: 0.2s; color: #00f0ff; }
+        .quick-icon-btn:nth-child(3) { animation-delay: 0.4s; color: var(--primary-glow); }
+        .quick-icon-btn:nth-child(4) { animation-delay: 0.6s; color: #1877f2; }
+        .quick-icon-btn:nth-child(5) { animation-delay: 0.8s; color: #e4405f; }
+        .quick-icon-btn:nth-child(6) { animation-delay: 1s; color: #0088cc; }
+
+        .quick-icon-btn:hover {
+            transform: scale(1.2) translateY(-5px) !important;
+            box-shadow: 0 0 20px currentColor;
+            background: rgba(255, 255, 255, 0.15);
+            border-color: currentColor;
+        }
+
+        /* 3D Dynamic Logo Display */
+        .logo-3d-wrapper {
+            perspective: 1000px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .logo-3d-card {
+            width: 320px;
+            height: 320px;
+            background: rgba(15, 20, 32, 0.6);
+            border-radius: 50%;
+            padding: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 3px solid var(--secondary-glow);
+            box-shadow: 0 0 40px rgba(0, 229, 255, 0.35), inset 0 0 20px rgba(0, 255, 136, 0.2);
+            transform: rotateY(-15deg) rotateX(10deg);
+            transition: all 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: pulseGlow 4s infinite alternate;
+        }
+        .logo-3d-card:hover {
+            transform: rotateY(0deg) rotateX(0deg) scale(1.08);
+            box-shadow: 0 0 60px rgba(0, 255, 136, 0.6), inset 0 0 30px rgba(0, 229, 255, 0.4);
+            border-color: var(--primary-glow);
+        }
+        .logo-3d-img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.5));
+        }
+
+        @keyframes pulseGlow {
+            0% { box-shadow: 0 0 30px rgba(0, 229, 255, 0.3), 0 0 15px rgba(0, 255, 136, 0.2); }
+            100% { box-shadow: 0 0 55px rgba(0, 255, 136, 0.5), 0 0 25px rgba(0, 229, 255, 0.4); }
+        }
+
+        /* Stats Section */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1200px;
+            margin: 40px auto 0 auto;
+        }
+        .stat-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+        }
+        .stat-card h3 { font-size: 2.2rem; color: var(--secondary-glow); font-family: 'Poppins', sans-serif; margin-bottom: 5px; }
+        .stat-card p { color: var(--text-dim); font-size: 0.95rem; }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, #25d366 0%, #1da851 100%); color: #FFF; border-radius: 50px; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; }
+        .whatsapp-float:hover { transform: scale(1.1) rotate(10deg); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); }
+
+        /* Footer */
+        footer { background: rgba(6, 7, 10, 0.8); backdrop-filter: blur(10px); padding: 50px 5% 30px 5%; border-top: 1px solid var(--glass-border); margin-top: 50px; }
+        .clock-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 30px; }
+        .clock-box { text-align: center; background: var(--glass-bg); padding: 15px 25px; border-radius: 15px; border: 1px solid var(--glass-border); min-width: 250px; }
+        .clock-box h4 { color: var(--text-dim); margin-bottom: 5px; font-weight: 500; font-size: 0.9rem;}
+        .clock-box div { font-size: 1.3rem; font-weight: 700; color: var(--primary-glow); text-shadow: 0 0 10px var(--primary-glow); font-family: 'Poppins', sans-serif; }
+        .footer-bottom { text-align: center; color: var(--text-dim); font-size: 0.9rem; border-top: 1px solid var(--glass-border); padding-top: 25px; }
+
+        /* Responsive Layout */
+        @media (max-width: 992px) {
+            .about-container { grid-template-columns: 1fr; gap: 40px; }
+            .logo-3d-wrapper { margin-top: 20px; }
+            .logo-3d-card { width: 260px; height: 260px; transform: rotateY(0deg) rotateX(0deg); }
+            .stats-grid { grid-template-columns: 1fr; }
+        }
+        @media (max-width: 650px) {
+            .mobile-menu-btn { display: block; }
+            nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(10, 11, 16, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 30px; border-bottom: 1px solid var(--glass-border); }
+            nav.active { display: block; }
+            nav ul { flex-direction: column; gap: 20px; text-align: center; }
+            .page-hero-content h1 { font-size: 2rem; }
+            .popup-player-card { padding: 10px 18px; gap: 12px; }
+            .icons-flex-container { justify-content: center; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Smooth Mouse Trail Canvas -->
+    <canvas id="cursorCanvas"></canvas>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="images/logo.png" alt="Rj Aadhavan Radio Logo" class="logo-img">
+            <div class="logo-text">Rj Aadhavan Radio <span>| GTR</span></div>
+        </a>
+        <div class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <nav id="navMenu">
+            <ul>
+                <li><a href="index.html">முகப்பு</a></li>
+                <li><a href="index.html#schedule">நிகழ்ச்சிகள்</a></li>
+                <li><a href="podcasts.html">போட்காஸ்ட்</a></li>
+                <li><a href="about.html" class="active">எங்களைப் பற்றி</a></li>
+                <li><a href="app.html">செயலி (App)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- Page Hero Banner -->
+    <div class="page-hero">
+        <div class="page-hero-content">
+            <h1>எங்களைப் பற்றி (About Us)</h1>
+            <p>இசையால் உலகத் தமிழர்களை இணைக்கும் குரல்</p>
+        </div>
+    </div>
+
+    <!-- Floating Popup Player Button between Hero and Content -->
+    <div class="popup-player-wrapper">
+        <div class="popup-player-card">
+            <button class="popup-play-btn" onclick="toggleLiveStream()">
+                <i class="fa-solid fa-play" id="playIcon"></i>
+            </button>
+            <div class="player-info-text">
+                <span class="title">Rj Aadhavan Radio Live</span>
+                <span class="subtitle">24/7 நேரலை ஒலிபரப்பு</span>
+            </div>
+        </div>
+    </div>
+    <audio id="liveAudio" src="https://stream-159.zeno.fm/dsdb1twe8ueuv" crossorigin="anonymous"></audio>
+
+    <!-- About Section Content -->
+    <section>
+        <div class="about-container">
+            <!-- Left Side: Text Details with Animated Icons -->
+            <div class="about-text-content">
+                <h2>எங்கள் வானொலியின் சுவாரஸ்ய பயணம்</h2>
+                <p><strong>Rj Aadhavan Radio | GTR</strong> என்பது உலகம் முழுவதும் வாழும் தமிழ் பேசும் மக்களுக்காக உருவாக்கப்பட்ட அதிநவீன இணைய வழியிலான டிஜிட்டல் வானொலி நிலையமாகும்.</p>
+                <p>மனதிற்கு இதமான மெல்லிசைகள், சிந்தனையைத் தூண்டும் உரையாடல்கள், அன்றாட நிகழ்வுகள் மற்றும் உயர்தர போட்காஸ்ட் நிகழ்ச்சிகள் என அனைத்து வயதினருக்கும் ஏற்ற வகையில் எங்களது ஒலிபரப்பு 24 மணிநேரமும் தொடர்கிறது.</p>
+
+                <ul class="about-features-list">
+                    <li><i class="fa-solid fa-circle-check"></i> HD தரத்திலான தெளிவான ஒலி அலைகள்</li>
+                    <li><i class="fa-solid fa-circle-check"></i> 24/7 இடைவிடாத நேரலை தமிழ் பாடல்கள்</li>
+                    <li><i class="fa-solid fa-circle-check"></i> பிரத்யேக போட்காஸ்ட் மற்றும் சிந்தனை நிகழ்ச்சிகள்</li>
+                </ul>
+
+                <!-- Animated Social & App Quick Links -->
+                <div class="social-quick-links">
+                    <h4>எங்களுடன் இணையுங்கள் & தரவிறக்குங்கள்:</h4>
+                    <div class="icons-flex-container">
+                        <a href="https://wa.me/94752277767" target="_blank" class="quick-icon-btn" title="WhatsApp Chat">
+                            <i class="fa-brands fa-whatsapp"></i>
+                        </a>
+                        <a href="app.html" class="quick-icon-btn" title="Google Play Store App">
+                            <i class="fa-brands fa-google-play"></i>
+                        </a>
+                        <a href="javascript:void(0)" onclick="toggleLiveStream()" class="quick-icon-btn" title="Radio Player">
+                            <i class="fa-solid fa-radio"></i>
+                        </a>
+                        <a href="#" target="_blank" class="quick-icon-btn" title="Facebook Page">
+                            <i class="fa-brands fa-facebook-f"></i>
+                        </a>
+                        <a href="#" target="_blank" class="quick-icon-btn" title="Instagram Profile">
+                            <i class="fa-brands fa-instagram"></i>
+                        </a>
+                        <a href="#" target="_blank" class="quick-icon-btn" title="Telegram Channel">
+                            <i class="fa-brands fa-telegram"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Right Side: 3D Animated Logo -->
+            <div class="logo-3d-wrapper">
+                <div class="logo-3d-card" title="RJ Aadhavan Radio Official Logo">
+                    <img src="images/logo.png" alt="RJ Aadhavan Radio 3D Logo" class="logo-3d-img">
+                </div>
+            </div>
+        </div>
+
+        <!-- Statistics Grid -->
+        <div class="stats-grid">
+            <div class="stat-card">
+                <h3>24/7</h3>
+                <p>தொடர்ச்சியான நேரலை</p>
+            </div>
+            <div class="stat-card">
+                <h3>100K+</h3>
+                <p>உலகளாவிய நேயர்கள்</p>
+            </div>
+            <div class="stat-card">
+                <h3>100%</h3>
+                <p>தூய தமிழ் பொழுதுபோக்கு</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/94752277767" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer>
+        <div class="clock-container">
+            <div class="clock-box">
+                <h4>இலங்கை / இந்திய நேரம் (SL/IN)</h4>
+                <div id="slClock">00:00:00</div>
+            </div>
+            <div class="clock-box">
+                <h4>ஜெர்மனி நேரம் (Germany)</h4>
+                <div id="gerClock">00:00:00</div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Rj Aadhavan Radio | GTR. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript Script -->
+    <script>
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        // Live Audio Player Logic
+        const liveAudio = document.getElementById('liveAudio');
+        const playIcon = document.getElementById('playIcon');
+        let isPlaying = false;
+
+        function toggleLiveStream() {
+            if (!isPlaying) {
+                liveAudio.play().then(() => {
+                    playIcon.className = 'fa-solid fa-pause';
+                    isPlaying = true;
+                }).catch(err => console.log(err));
+            } else {
+                liveAudio.pause();
+                playIcon.className = 'fa-solid fa-play';
+                isPlaying = false;
+            }
+        }
+
+        // Clocks Logic
+        function updateClocks() {
+            const now = new Date();
+            document.getElementById('slClock').innerText = now.toLocaleTimeString('ta-IN', { timeZone: 'Asia/Colombo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            document.getElementById('gerClock').innerText = now.toLocaleTimeString('ta-IN', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        /* Smooth Cursor Trail Effect */
+        const canvas = document.getElementById('cursorCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const multiColors = ['#ff007f', '#ff5e00', '#ffea00', '#00ff88', '#00e5ff', '#a100ff', '#ff00d4'];
+        const smallMusicElements = ['🎵', '🎶', '🎼', '✨'];
+
+        class SmoothCursorParticle {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 8;
+                this.y = y + (Math.random() - 0.5) * 8;
+                this.type = Math.random() < 0.7 ? 'symbol' : 'glowCircle'; 
+                this.symbol = smallMusicElements[Math.floor(Math.random() * smallMusicElements.length)];
+                this.fontSize = Math.random() * 6 + 10;
+                this.radius = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = -Math.random() * 1 - 0.5;
+                this.color = multiColors[Math.floor(Math.random() * multiColors.length)];
+                this.life = 1.0; 
+                this.fadeSpeed = Math.random() * 0.015 + 0.015;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= this.fadeSpeed;
+                if(this.type === 'glowCircle') this.radius += 0.15;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(this.life, 0);
+
+                if (this.type === 'symbol') {
+                    ctx.font = `${this.fontSize}px Arial`;
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 6;
+                    ctx.fillText(this.symbol, this.x, this.y);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        let lastX = 0, lastY = 0;
+        document.addEventListener('mousemove', (e) => {
+            const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
+            if (dist > 8) { 
+                particles.push(new SmoothCursorParticle(e.clientX, e.clientY));
+                lastX = e.clientX;
+                lastY = e.clientY;
+            }
+        });
+
+        function renderCursorEffect() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(renderCursorEffect);
+        }
+        renderCursorEffect();
+    </script>
+</body>
+</html>

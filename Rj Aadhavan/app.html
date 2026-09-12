@@ -1,0 +1,709 @@
+<!DOCTYPE html>
+<html lang="ta">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>செயலி (App) | Rj Aadhavan Radio - GTR</title>
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Anek+Tamil:wght@300;400;500;600;700;800&family=Mukta+Malar:wght@400;500;600;700&family=Poppins:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --primary-glow: #00ff88;
+            --secondary-glow: #00e5ff;
+            --accent-pink: #ff007f;
+            --dark-bg: #050609;
+            --glass-bg: rgba(255, 255, 255, 0.03);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --glass-blur: blur(15px);
+            --text-light: #ffffff;
+            --text-dim: #b0b3c1;
+            
+            --font-tamil-primary: 'Anek Tamil', 'Mukta Malar', 'Poppins', sans-serif;
+            --font-tamil-heading: 'Mukta Malar', 'Anek Tamil', sans-serif;
+        }
+
+        * { 
+            margin: 0; 
+            padding: 0; 
+            box-sizing: border-box; 
+            font-family: var(--font-tamil-primary); 
+        }
+
+        body {
+            background-color: var(--dark-bg);
+            color: var(--text-light);
+            overflow-x: hidden;
+            background-image: radial-gradient(circle at 50% 20%, #1a2035 0%, var(--dark-bg) 60%);
+            font-family: var(--font-tamil-primary);
+        }
+
+        h1, h2, h3, h4, h5, h6, .section-title, .logo-text {
+            font-family: var(--font-tamil-heading);
+        }
+
+        /* Smooth Music Cursor Canvas */
+        #cursorCanvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; pointer-events: none; z-index: 99999; }
+
+        /* Header Navigation */
+        header {
+            display: flex; justify-content: space-between; align-items: center; padding: 10px 5%;
+            background: rgba(10, 11, 16, 0.75); backdrop-filter: var(--glass-blur); -webkit-backdrop-filter: var(--glass-blur);
+            position: fixed; width: 100%; top: 0; z-index: 1000; border-bottom: 1px solid var(--glass-border);
+        }
+        .logo-container { display: flex; align-items: center; gap: 12px; text-decoration: none; }
+        .logo-img { height: 55px; width: auto; object-fit: contain; }
+        .logo-text { font-size: 22px; font-weight: 700; color: var(--text-light); }
+        .logo-text span { color: var(--secondary-glow); font-size: 16px; font-weight: 400; }
+
+        nav ul { display: flex; list-style: none; gap: 25px; }
+        nav a { color: var(--text-dim); text-decoration: none; font-weight: 500; transition: 0.3s; font-size: 15px; }
+        nav a:hover, nav a.active { color: var(--primary-glow); text-shadow: 0 0 10px var(--primary-glow); }
+        .mobile-menu-btn { display: none; font-size: 24px; color: #fff; cursor: pointer; }
+
+        /* App Page Hero Section */
+        .app-hero {
+            padding: 130px 5% 50px 5%;
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 30px;
+            align-items: center;
+            max-width: 1300px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .app-hero-details h1 {
+            font-size: 2.8rem;
+            line-height: 1.2;
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, #fff 0%, var(--secondary-glow) 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .app-hero-details p {
+            font-size: 1.05rem;
+            color: var(--text-dim);
+            line-height: 1.8;
+            margin-bottom: 25px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* Download Buttons Group */
+        .btn-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            flex-wrap: wrap;
+            margin-bottom: 20px;
+        }
+
+        .playstore-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 15px;
+            background: #000;
+            color: #fff;
+            padding: 14px 28px;
+            border-radius: 16px;
+            text-decoration: none;
+            border: 1px solid var(--secondary-glow);
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 20px rgba(0, 229, 255, 0.25);
+        }
+        .playstore-btn:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 25px rgba(0, 229, 255, 0.4);
+            border-color: var(--primary-glow);
+        }
+        .playstore-btn i { font-size: 32px; color: #689F38; }
+
+        .app-contact-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            background: rgba(37, 211, 102, 0.15);
+            color: #25d366;
+            padding: 14px 24px;
+            border-radius: 16px;
+            text-decoration: none;
+            border: 1px solid rgba(37, 211, 102, 0.4);
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        .app-contact-btn:hover {
+            background: #25d366;
+            color: #000;
+            box-shadow: 0 5px 20px rgba(37, 211, 102, 0.4);
+        }
+
+        /* Always Side-By-Side 3D Phones */
+        .dual-mobile-wrapper {
+            display: flex;
+            flex-direction: row;
+            justify-content: center;
+            align-items: center;
+            gap: 30px;
+            perspective: 1200px;
+            margin-top: 10px;
+            padding: 20px 0;
+            width: 100%;
+        }
+
+        .real-phone-3d {
+            width: 250px;
+            height: 510px;
+            background: #080a0f;
+            border-radius: 42px;
+            position: relative;
+            box-shadow: 
+                0 0 0 2px #3a415a,
+                0 0 0 5px #151922,
+                -10px 18px 35px rgba(0, 0, 0, 0.8),
+                0 0 25px rgba(0, 229, 255, 0.2);
+            transition: all 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .phone-left { transform: rotateY(20deg) rotateX(8deg) rotateZ(-2deg); }
+        .phone-right { transform: rotateY(-20deg) rotateX(8deg) rotateZ(2deg); }
+
+        .dual-mobile-wrapper:hover .real-phone-3d {
+            opacity: 0.75;
+            transform: scale(0.95) rotateY(0deg) rotateX(0deg);
+        }
+
+        .real-phone-3d:hover {
+            opacity: 1 !important;
+            transform: scale(1.1) rotateY(0deg) rotateX(0deg) translateZ(40px) !important;
+            z-index: 100;
+            box-shadow: 
+                0 0 0 2px var(--primary-glow),
+                0 0 0 5px #000,
+                0 20px 50px rgba(0, 255, 136, 0.4),
+                0 0 35px rgba(0, 229, 255, 0.5) !important;
+        }
+
+        .real-phone-3d::before {
+            content: '';
+            position: absolute;
+            right: -7px;
+            top: 100px;
+            width: 5px;
+            height: 40px;
+            background: linear-gradient(to bottom, #555, #222);
+            border-radius: 3px 0 0 3px;
+            box-shadow: 0 55px 0 #333, 0 100px 0 #333;
+        }
+
+        .phone-screen {
+            width: 100%;
+            height: 100%;
+            border-radius: 38px;
+            overflow: hidden;
+            border: 7px solid #000;
+            position: relative;
+            background: #000;
+        }
+
+        .phone-notch {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 100px;
+            height: 20px;
+            background: #000;
+            border-bottom-left-radius: 12px;
+            border-bottom-right-radius: 12px;
+            z-index: 20;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .camera-lens { width: 7px; height: 7px; background: #111; border: 1px solid #222; border-radius: 50%; }
+        .speaker-grille { width: 30px; height: 3px; background: #333; border-radius: 2px; }
+        .screen-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+        .screen-glare { position: absolute; top: 0; left: 0; right: 0; bottom: 0; background: linear-gradient(135deg, rgba(255,255,255,0.12) 0%, rgba(255,255,255,0) 40%); pointer-events: none; z-index: 15; border-radius: 30px; }
+
+        /* Section Title Common */
+        section { padding: 60px 5%; }
+        .section-title { text-align: center; font-size: 2.2rem; margin-bottom: 40px; color: var(--text-light); font-weight: 800; position: relative; display: block; }
+        .section-title::after { content: ''; position: absolute; bottom: -10px; left: 50%; transform: translateX(-50%); width: 80px; height: 3px; background: linear-gradient(to right, var(--accent-pink), var(--primary-glow)); border-radius: 2px; }
+
+        /* SPECIAL FEATURES GRID */
+        .special-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .special-card {
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            -webkit-backdrop-filter: var(--glass-blur);
+            border: 1px solid var(--glass-border);
+            padding: 30px 22px;
+            border-radius: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+        .special-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 3px;
+            background: linear-gradient(90deg, transparent, var(--secondary-glow), transparent);
+            opacity: 0;
+            transition: 0.3s;
+        }
+        .special-card:hover {
+            transform: translateY(-8px);
+            border-color: rgba(0, 229, 255, 0.4);
+            box-shadow: 0 10px 30px rgba(0, 229, 255, 0.15);
+        }
+        .special-card:hover::before {
+            opacity: 1;
+        }
+        .special-card i {
+            font-size: 38px;
+            color: var(--secondary-glow);
+            margin-bottom: 15px;
+            background: linear-gradient(135deg, var(--primary-glow), var(--secondary-glow));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .special-card h3 {
+            font-size: 1.2rem;
+            color: var(--text-light);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        .special-card p {
+            color: var(--text-dim);
+            font-size: 0.92rem;
+            line-height: 1.6;
+        }
+
+        /* Promo Video Section */
+        .video-section-container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--glass-bg);
+            backdrop-filter: var(--glass-blur);
+            padding: 25px;
+            border-radius: 25px;
+            border: 1px solid var(--glass-border);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.4);
+        }
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 18px;
+        }
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* App Screenshots Gallery Section */
+        .screenshots-grid {
+            display: grid;
+            grid-template-columns: repeat(6, 1fr);
+            gap: 18px;
+            max-width: 1250px;
+            margin: 0 auto;
+        }
+        .screenshot-item {
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 8px;
+            transition: 0.3s ease;
+        }
+        .screenshot-item:hover {
+            transform: scale(1.05);
+            border-color: var(--secondary-glow);
+            box-shadow: 0 8px 20px rgba(0, 229, 255, 0.3);
+        }
+        .screenshot-img {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            border-radius: 12px;
+        }
+
+        /* Floating WhatsApp Button */
+        .whatsapp-float { position: fixed; bottom: 30px; right: 30px; background: linear-gradient(135deg, #25d366 0%, #1da851 100%); color: #FFF; border-radius: 50px; font-size: 30px; box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 1000; width: 60px; height: 60px; display: flex; align-items: center; justify-content: center; text-decoration: none; transition: 0.3s; }
+        .whatsapp-float:hover { transform: scale(1.1) rotate(10deg); box-shadow: 0 8px 25px rgba(37, 211, 102, 0.4); }
+
+        /* Footer */
+        footer { background: rgba(6, 7, 10, 0.8); backdrop-filter: blur(10px); padding: 50px 5% 30px 5%; border-top: 1px solid var(--glass-border); margin-top: 50px; }
+        .clock-container { display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; margin-bottom: 30px; }
+        .clock-box { text-align: center; background: var(--glass-bg); padding: 15px 25px; border-radius: 15px; border: 1px solid var(--glass-border); min-width: 250px; }
+        .clock-box h4 { color: var(--text-dim); margin-bottom: 5px; font-weight: 500; font-size: 0.9rem;}
+        .clock-box div { font-size: 1.3rem; font-weight: 700; color: var(--primary-glow); text-shadow: 0 0 10px var(--primary-glow); font-family: 'Poppins', sans-serif; }
+        .footer-bottom { text-align: center; color: var(--text-dim); font-size: 0.9rem; border-top: 1px solid var(--glass-border); padding-top: 25px; }
+
+        /* Mobile Responsive Breaks */
+        @media (max-width: 992px) {
+            .special-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+
+        @media (max-width: 650px) {
+            .mobile-menu-btn { display: block; }
+            nav { display: none; position: absolute; top: 100%; left: 0; width: 100%; background: rgba(10, 11, 16, 0.95); backdrop-filter: blur(20px); -webkit-backdrop-filter: blur(20px); padding: 30px; border-bottom: 1px solid var(--glass-border); }
+            nav.active { display: block; }
+            nav ul { flex-direction: column; gap: 20px; text-align: center; }
+            
+            /* Phones Side-By-Side in Mobile View */
+            .dual-mobile-wrapper { gap: 12px; }
+            .real-phone-3d { width: 155px; height: 310px; border-radius: 26px; }
+            .phone-screen { border-width: 4px; border-radius: 22px; }
+            .phone-notch { width: 60px; height: 12px; }
+            .speaker-grille { width: 18px; height: 2px; }
+            .camera-lens { width: 4px; height: 4px; }
+
+            .special-grid { grid-template-columns: 1fr; }
+            .screenshots-grid { grid-template-columns: repeat(2, 1fr); }
+            .app-hero-details h1 { font-size: 2.1rem; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Smooth Mouse Trail Canvas -->
+    <canvas id="cursorCanvas"></canvas>
+
+    <!-- Header Navigation -->
+    <header>
+        <a href="index.html" class="logo-container">
+            <img src="images/logo.png" alt="Rj Aadhavan Radio Logo" class="logo-img">
+            <div class="logo-text">Rj Aadhavan Radio <span>| GTR</span></div>
+        </a>
+        <div class="mobile-menu-btn" onclick="toggleMenu()">
+            <i class="fa-solid fa-bars"></i>
+        </div>
+        <nav id="navMenu">
+            <ul>
+                <li><a href="index.html">முகப்பு</a></li>
+                <li><a href="index.html#schedule">நிகழ்ச்சிகள்</a></li>
+                <li><a href="podcasts.html">போட்காஸ்ட்</a></li>
+                <li><a href="about.html">எங்களைப் பற்றி</a></li>
+                <li><a href="app.html" class="active">செயலி (App)</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <!-- App Hero Section -->
+    <div class="app-hero">
+        <div class="app-hero-details">
+            <h1>RJ Aadhavan Radio மொபைல் செயலி</h1>
+            <p>உலகத் தமிழர்களை எந்நேரமும் இசையால் இணைக்கும் அதிகாரப்பூர்வ ஆண்ட்ராய்டு செயலி! தெளிவான HD குரல் பதிவு, இடைவிடாத நேரலை பாடல்கள் மற்றும் சுவாரஸ்யமான போட்காஸ்ட் நிகழ்ச்சிகளை உங்கள் மொபைலில் அனுபவியுங்கள்.</p>
+
+            <div class="btn-group">
+                <a href="https://play.google.com/store/apps/details?id=com.aadhavan.radio" target="_blank" class="playstore-btn">
+                    <i class="fa-brands fa-google-play"></i>
+                    <div>
+                        <div style="font-size: 11px; text-transform: uppercase; color: #aaa;">GET IT ON</div>
+                        <div style="font-size: 18px; font-weight: 700;">Google Play</div>
+                    </div>
+                </a>
+
+                <a href="https://wa.me/94783744142" target="_blank" class="app-contact-btn">
+                    <i class="fa-brands fa-whatsapp" style="font-size: 22px;"></i>
+                    <span>தொடர்புக்கு / உதவி</span>
+                </a>
+            </div>
+
+            <div style="color: var(--text-dim); font-size: 0.9rem;">
+                <i class="fa-solid fa-globe" style="color: var(--secondary-glow); margin-right: 6px;"></i>
+                இணையதளம்: <a href="index.html" style="color: var(--primary-glow); text-decoration: none;">www.rjaadhavanradio.com</a>
+            </div>
+        </div>
+
+        <!-- Always Side-by-Side Dual Mobile Display Area -->
+        <div class="dual-mobile-wrapper">
+            <!-- Left Mobile (Welcome Screen) -->
+            <div class="real-phone-3d phone-left" title="RJ Aadhavan Welcome Screen">
+                <div class="phone-screen">
+                    <div class="phone-notch">
+                        <div class="speaker-grille"></div>
+                        <div class="camera-lens"></div>
+                    </div>
+                    <div class="screen-glare"></div>
+                    <img src="screen1.jpeg" alt="Welcome Screen" class="screen-img">
+                </div>
+            </div>
+
+            <!-- Right Mobile (Radio Player Screen) -->
+            <div class="real-phone-3d phone-right" title="RJ Aadhavan Live Radio Player">
+                <div class="phone-screen">
+                    <div class="phone-notch">
+                        <div class="speaker-grille"></div>
+                        <div class="camera-lens"></div>
+                    </div>
+                    <div class="screen-glare"></div>
+                    <img src="screen2.jpeg" alt="Live Player Screen" class="screen-img">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- UPDATED MENU FEATURES SECTION -->
+    <section>
+        <h2 class="section-title">செயலியின் சிறப்பு அம்சங்கள்</h2>
+        <div class="special-grid">
+            
+            <!-- Feature 1: AutoPlay -->
+            <div class="special-card">
+                <i class="fa-solid fa-circle-play"></i>
+                <h3>AutoPlay வசதி</h3>
+                <p>செயலியைத் திறந்தவுடனே பாடல்கள் தானாகவே இயங்கி உங்களுக்கு உடனடி இசை அனுபவத்தைத் தரும்.</p>
+            </div>
+
+            <!-- Feature 2: Background Play -->
+            <div class="special-card">
+                <i class="fa-solid fa-arrows-to-eye"></i>
+                <h3>பின்னணியில் இயங்கும் வசதி</h3>
+                <p>மற்ற செயலிகளைப் பயன்படுத்தும் போதும் அல்லது திரை பூட்டப்பட்ட நிலையிலும் வானொலி தடையின்றி இயங்கும்.</p>
+            </div>
+
+            <!-- Feature 3: Website Access -->
+            <div class="special-card">
+                <i class="fa-solid fa-globe"></i>
+                <h3>இணையதள பயன்பாடு</h3>
+                <p>செயலியினுள் இருந்தவாறே எங்களது அதிகாரப்பூர்வ இணையதளத்தை எளிதாக அணுகி தகவல்களைப் பெறலாம்.</p>
+            </div>
+
+            <!-- Feature 4: Knowledge Jackpot Quiz -->
+            <div class="special-card">
+                <i class="fa-solid fa-brain"></i>
+                <h3>அறிவு ஜேக்போட் கேள்விகள்</h3>
+                <p>உங்கள் அறிவைக் கூர்மைப்படுத்தும் சுவாரஸ்யமான நேரலை கேள்விகள் மற்றும் வினாடி-வினா போட்டிகள்.</p>
+            </div>
+
+            <!-- Feature 5: Podcast -->
+            <div class="special-card">
+                <i class="fa-solid fa-podcast"></i>
+                <h3>நிகழ்ச்சிகளுக்கான போட்காஸ்ட்</h3>
+                <p>தவறவிட்ட சிறப்பு நிகழ்ச்சிகள், நேர்காணல்கள் மற்றும் குரல் பதிவுகளை எந்நேரமும் கேட்கும் வசதி.</p>
+            </div>
+
+            <!-- Feature 6: Social Media -->
+            <div class="special-card">
+                <i class="fa-solid fa-share-nodes"></i>
+                <h3>சமூக வலைதள அணுகல்கள்</h3>
+                <p>எங்களது Facebook, Instagram மற்றும் YouTube பக்கங்களை செயலி வழியாக நேரடியாக இணைக்கலாம்.</p>
+            </div>
+
+            <!-- Feature 7: Low Data Usage -->
+            <div class="special-card">
+                <i class="fa-solid fa-gauge-high"></i>
+                <h3>குறைந்த டேட்டா பயன்பாடு</h3>
+                <p>குறைந்த இணைய வேகத்திலும் மிகக் குறைந்த மொபைல் டேட்டா செலவில் தெளிவான ஒலியைக் கேட்கலாம்.</p>
+            </div>
+
+            <!-- Feature 8: 24/7 HD Live -->
+            <div class="special-card">
+                <i class="fa-solid fa-tower-broadcast"></i>
+                <h3>24/7 HD நேரலை</h3>
+                <p>நாள் முழுவதும் இடைவிடாது உயர்தர HD டிஜிட்டல் ஒலியில் பாடல்கள் மற்றும் நேரலை நிகழ்ச்சிகள்.</p>
+            </div>
+
+            <!-- Feature 9: Notification / Reminder -->
+            <div class="special-card">
+                <i class="fa-solid fa-bell"></i>
+                <h3>நிகழ்ச்சி நினைவூட்டல்</h3>
+                <p>உங்களுக்குப் பிடித்த சிறப்பு நிகழ்ச்சிகளைத் தவறவிடாமல் இருக்க முன் அறிவிப்பு (Alert Notifications).</p>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- App Screenshots Section -->
+    <section style="background: rgba(0,0,0,0.25);">
+        <h2 class="section-title">செயலியின் திரைத்தோற்றங்கள் (Screenshots)</h2>
+        <div class="screenshots-grid">
+            <div class="screenshot-item">
+                <img src="images/1.png" alt="Screenshot 1" class="screenshot-img">
+            </div>
+            <div class="screenshot-item">
+                <img src="images/2.png" alt="Screenshot 2" class="screenshot-img">
+            </div>
+            <div class="screenshot-item">
+                <img src="images/3.png" alt="Screenshot 3" class="screenshot-img">
+            </div>
+            <div class="screenshot-item">
+                <img src="images/4.png" alt="Screenshot 4" class="screenshot-img">
+            </div>
+            <div class="screenshot-item">
+                <img src="images/5.png" alt="Screenshot 5" class="screenshot-img">
+            </div>
+            <div class="screenshot-item">
+                <img src="images/6.png" alt="Screenshot 6" class="screenshot-img">
+            </div>
+        </div>
+    </section>
+
+    <!-- App Promo Video Section -->
+    <section>
+        <h2 class="section-title">செயலியின் ப்ரோமோ வீடியோ (Promo Video)</h2>
+        <div class="video-section-container">
+            <div class="video-wrapper">
+                <iframe 
+                    src="https://www.youtube.com/embed/JTit3fHsy6w" 
+                    title="RJ Aadhavan Radio App Promo" 
+                    allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+                    allowfullscreen>
+                </iframe>
+            </div>
+        </div>
+    </section>
+
+    <!-- Floating WhatsApp Button -->
+    <a href="https://wa.me/783744142" class="whatsapp-float" target="_blank">
+        <i class="fa-brands fa-whatsapp"></i>
+    </a>
+
+    <!-- Footer -->
+    <footer>
+        <div class="clock-container">
+            <div class="clock-box">
+                <h4>இலங்கை / இந்திய நேரம் (SL/IN)</h4>
+                <div id="slClock">00:00:00</div>
+            </div>
+            <div class="clock-box">
+                <h4>ஜெர்மனி நேரம் (Germany)</h4>
+                <div id="gerClock">00:00:00</div>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2026 Rj Aadhavan Radio | GTR. அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.</p>
+        </div>
+    </footer>
+
+    <!-- JavaScript -->
+    <script>
+        function toggleMenu() {
+            document.getElementById('navMenu').classList.toggle('active');
+        }
+
+        // Clocks Logic
+        function updateClocks() {
+            const now = new Date();
+            document.getElementById('slClock').innerText = now.toLocaleTimeString('ta-IN', { timeZone: 'Asia/Colombo', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+            document.getElementById('gerClock').innerText = now.toLocaleTimeString('ta-IN', { timeZone: 'Europe/Berlin', hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: true });
+        }
+        setInterval(updateClocks, 1000);
+        updateClocks();
+
+        /* Smooth Cursor Trail Effect */
+        const canvas = document.getElementById('cursorCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        const multiColors = ['#ff007f', '#ff5e00', '#ffea00', '#00ff88', '#00e5ff', '#a100ff', '#ff00d4'];
+        const smallMusicElements = ['🎵', '🎶', '🎼', '✨'];
+
+        class SmoothCursorParticle {
+            constructor(x, y) {
+                this.x = x + (Math.random() - 0.5) * 8;
+                this.y = y + (Math.random() - 0.5) * 8;
+                this.type = Math.random() < 0.7 ? 'symbol' : 'glowCircle'; 
+                this.symbol = smallMusicElements[Math.floor(Math.random() * smallMusicElements.length)];
+                this.fontSize = Math.random() * 6 + 10;
+                this.radius = Math.random() * 2 + 1;
+                this.speedX = (Math.random() - 0.5) * 0.8;
+                this.speedY = -Math.random() * 1 - 0.5;
+                this.color = multiColors[Math.floor(Math.random() * multiColors.length)];
+                this.life = 1.0; 
+                this.fadeSpeed = Math.random() * 0.015 + 0.015;
+            }
+
+            update() {
+                this.x += this.speedX;
+                this.y += this.speedY;
+                this.life -= this.fadeSpeed;
+                if(this.type === 'glowCircle') this.radius += 0.15;
+            }
+
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(this.life, 0);
+
+                if (this.type === 'symbol') {
+                    ctx.font = `${this.fontSize}px Arial`;
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 6;
+                    ctx.fillText(this.symbol, this.x, this.y);
+                } else {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.radius, 0, Math.PI * 2);
+                    ctx.fillStyle = this.color;
+                    ctx.shadowColor = this.color;
+                    ctx.shadowBlur = 8;
+                    ctx.fill();
+                }
+
+                ctx.restore();
+            }
+        }
+
+        let lastX = 0, lastY = 0;
+        document.addEventListener('mousemove', (e) => {
+            const dist = Math.hypot(e.clientX - lastX, e.clientY - lastY);
+            if (dist > 8) { 
+                particles.push(new SmoothCursorParticle(e.clientX, e.clientY));
+                lastX = e.clientX;
+                lastY = e.clientY;
+            }
+        });
+
+        function renderCursorEffect() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < particles.length; i++) {
+                particles[i].update();
+                particles[i].draw();
+                if (particles[i].life <= 0) {
+                    particles.splice(i, 1);
+                    i--;
+                }
+            }
+            requestAnimationFrame(renderCursorEffect);
+        }
+        renderCursorEffect();
+    </script>
+</body>
+</html>

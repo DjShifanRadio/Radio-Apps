@@ -377,22 +377,23 @@
                 let fetchedData = [];
 
                 data.forEach((row) => {
-                    // கேள்வியைப் பெறுதல்
+                    // 1. அனைத்து விதமான Column பெயர்களையும் படிக்கும் அம்சம்
                     const qVal = row.question || row.Question || row["கேள்வி"];
 
                     if (qVal && qVal.toString().trim() !== "") {
-                        // சரியான விடையைக் கணக்கிடுதல் (Sheet-ல் 1, 2, 3, 4 என இருந்தால் 0, 1, 2, 3 என மாற்றுதல்)
-                        let parsedCorrect = parseInt(row.correct || row.Correct || row["சரியான விடை"] || 1);
-                        let correctIndex = (parsedCorrect >= 1 && parsedCorrect <= 4) ? parsedCorrect - 1 : 0;
+                        // 2. Correct Index-ஐ துல்லியமாக 0-based Array Index ஆக மாற்றுதல்
+                        let rawCorrectVal = row.correct || row.Correct || row["சரியான விடை"] || "1";
+                        let num = parseInt(String(rawCorrectVal).trim(), 10);
+                        let correctIndex = (!isNaN(num) && num >= 1 && num <= 4) ? (num - 1) : 0;
 
-                        // ஆப்ஷன்களைப் பெறுதல் (OpenSheet-ல் 'option' என உள்ளதையும் தாங்கும் வகையில்)
-                        let opt1 = row.option1 || row.Option1 || row["ஆப்ஷன் 1"] || "";
-                        let opt2 = row.option2 || row.Option2 || row["ஆப்ஷன் 2"] || "";
-                        let opt3 = row.option3 || row.Option3 || row["ஆப்ஷன் 3"] || "";
-                        let opt4 = row.option4 || row.Option4 || row.option || row.Option || row["ஆப்ஷன் 4"] || "";
+                        // 3. ஆப்ஷன்களை பெறுதல் (OpenSheet-ல் உள்ள 'option' பிழையையும் தாங்கும் வகையில்)
+                        let opt1 = String(row.option1 || row.Option1 || row["ஆப்ஷன் 1"] || "").trim();
+                        let opt2 = String(row.option2 || row.Option2 || row["ஆப்ஷன் 2"] || "").trim();
+                        let opt3 = String(row.option3 || row.Option3 || row["ஆப்ஷன் 3"] || "").trim();
+                        let opt4 = String(row.option4 || row.Option4 || row.option || row.Option || row["ஆப்ஷன் 4"] || "").trim();
 
                         fetchedData.push({
-                            question: qVal.toString(),
+                            question: String(qVal).trim(),
                             options: [opt1, opt2, opt3, opt4],
                             correct: correctIndex
                         });
